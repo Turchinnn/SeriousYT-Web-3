@@ -4,6 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Clock, Users, Trophy, Filter } from "lucide-react";
 import { allGiveaways, getActiveGiveaways, getEndedGiveaways } from "@/data/giveaways";
 
+
+
+
 const getStatusColor = (status: string) => {
   switch (status) {
     case "active": return "bg-green-500/20 text-green-400 border-green-500/50";

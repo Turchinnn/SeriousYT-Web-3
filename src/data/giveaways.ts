@@ -1,3 +1,11 @@
+// assets
+import cash1 from "@/assets/cash1.jpg";
+import cash2 from "@/assets/cash2.jpeg";
+import cash3 from "@/assets/cash3.jpg";
+import FKBlackLaminate from "@/assets/flipknifeblacklaminate.png";
+import SDBlueSteel from "@/assets/shadowdaggersbluesteel.png";
+import NavajaStained from "@/assets/navajastained.jpg";
+
 // Shared giveaway data for the entire application
 export interface Giveaway {
   id: number;
@@ -12,6 +20,7 @@ export interface Giveaway {
   category?: string;
 }
 
+
 export const allGiveaways: Giveaway[] = [
   {
     id: 1,
@@ -21,7 +30,7 @@ export const allGiveaways: Giveaway[] = [
     participants: 5,
     url: "https://clash.gg/affiliate/creator/SERIOUS",
     image: "src/assets/navajastained.jpg",
-    status: "ending-soon",
+    status: "ended",
     value: "$100",
     category: "gaming"
   },
