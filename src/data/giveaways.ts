@@ -79,7 +79,7 @@ export const allGiveaways: Giveaway[] = [
     description: "Join our free Case Battle on Clash.gg! Watch the Serious channel live streams and follow along to participate and win awesome rewards.",
     endDate: "2025-08-02",
     participants: 179,
-    url: "https://gleam.io/example6",
+    url: "https://clash.gg",
     image: "src/assets/clashggfree.jpg_large",
     status: "active",
     value: "$9",
