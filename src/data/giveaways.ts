@@ -29,7 +29,7 @@ export const allGiveaways: Giveaway[] = [
     endDate: "2025-10-03",
     participants: 5,
     url: "https://clash.gg/affiliate/creator/SERIOUS",
-    image: "src/assets/navajastained.jpg",
+    image: "<img src={NavajaStained}/>",
     status: "ended",
     value: "$100",
     category: "gaming"

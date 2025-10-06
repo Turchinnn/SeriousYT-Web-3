@@ -4,8 +4,10 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
-// https://vitejs.dev/config/
+
+
 export default defineConfig(({ mode }) => ({
+  base: "./",  // <<< dodaj ovo
   server: {
     host: "::",
     port: 8080,
@@ -17,9 +19,9 @@ export default defineConfig(({ mode }) => ({
       targets: [
         {
           src: "src/assets/*",
-          dest: "assets", // kopira u dist/assets
-        },
-      ],
+          dest: "assets"
+        }
+      ]
     }),
   ].filter(Boolean),
   resolve: {
@@ -28,6 +30,6 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    assetsInlineLimit: 0, // sprječava Base64 inline slike
+    assetsInlineLimit: 0,  // ne inline-uj slike, nego kopiraj uvijek
   },
 }));
