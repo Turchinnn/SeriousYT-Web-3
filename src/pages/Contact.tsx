@@ -185,19 +185,19 @@ const Contact = () => {
                 name: "Clash GG", 
                 category: "CS2 Case Opening Site",
                 url: "https://clash.gg",
-                image: "/src/assets/clashgg3.jpg"
+                image: "https://i.ibb.co/CsYzTjC9/clashgg3.jpg"
               },
               { 
                 name: "Crypto Casino", 
                 category: "Gambling Site",
                 url: "https://www.logitechg.com",
-                image: "/src/assets/casino2.png"
+                image: "https://i.ibb.co/k2HJ3Wv5/casino2.png"
               },              
               { 
                 name: "Hydro Wash", 
                 category: "Pressure Washing Company",
                 url: "https://hydrowash.hr",
-                image: "/src/assets/hydrowash2.jpg"
+                image: "https://i.ibb.co/XkNWhXzc/Hydrowash2.jpg"
               }
             ].map((sponsor, index) => (
               <Card 
