@@ -77,7 +77,7 @@ export const allGiveaways: Giveaway[] = [
     endDate: "2025-09-15",
     participants: 185,
     url: "https://gleam.io/example5",
-    image: "src/assets/cash1.jpg",
+    image: "https://i.ibb.co/fVb8DWfS/cash1.jpg",
     status: "ended",
     value: "$300",
     category: "gaming"
@@ -89,7 +89,7 @@ export const allGiveaways: Giveaway[] = [
     endDate: "2025-08-02",
     participants: 179,
     url: "https://clash.gg",
-    image: "src/assets/clashggfree.jpg_large",
+    image: "https://ibb.co/GfkQQFcF",
     status: "active",
     value: "$9",
     category: "tech"
@@ -101,7 +101,7 @@ export const allGiveaways: Giveaway[] = [
     endDate: "2025-10-14",
     participants: 1,
     url: "https://clash.gg/affiliate/creator/SERIOUS",
-    image: "src/assets/clashggfree.jpg_large",
+    image: "https://community.skin.club/wp-content/uploads/2023/05/Background-5.jpg",
     status: "active",
     value: "$100",
     category: "tech"

@@ -96,7 +96,7 @@ const Navbar = () => {
             <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 
           group-hover:rotate-6 transition-all duration-500 pulse-glow">
               <img
-                src="/src/assets/mojlogo.png"
+                src="https://i.ibb.co/v4XwnWC0/mojlogo.png"
                 alt="Serious Logo"
                 className="w-9 h-9 object-contain rounded-lg"
               />
