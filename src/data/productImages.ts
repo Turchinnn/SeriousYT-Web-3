@@ -14,9 +14,9 @@ export const getProductImages = (productId: string, category: string) => {
     return {
       default: mockImages.default,
       variations: {
-        "Crna": mockImages.black,
-        "Bela": mockImages.white,
-        "Siva": mockImages.gray,
+        "Black": mockImages.black,
+        "White": mockImages.white,
+        "Gray": mockImages.gray,
         "Plava": mockImages.blue
       }
     };
@@ -26,9 +26,9 @@ export const getProductImages = (productId: string, category: string) => {
     return {
       default: mockImages.default,
       variations: {
-        "Crna": mockImages.black,
-        "Bela": mockImages.white,
-        "Siva": mockImages.gray,
+        "Black": mockImages.black,
+        "White": mockImages.white,
+        "Gray": mockImages.gray,
         "Plava": mockImages.blue
       }
     };
@@ -38,8 +38,8 @@ export const getProductImages = (productId: string, category: string) => {
     return {
       default: mockImages.default,
       variations: {
-        "Crna": mockImages.black,
-        "Bela": mockImages.white
+        "Black": mockImages.black,
+        "White": mockImages.white
       }
     };
   }
@@ -48,9 +48,9 @@ export const getProductImages = (productId: string, category: string) => {
   return {
     default: mockImages.default,
     variations: {
-      "Crna": mockImages.black,
-      "Bela": mockImages.white,
-      "Siva": mockImages.gray,
+      "Black": mockImages.black,
+      "White": mockImages.white,
+      "Gray": mockImages.gray,
       "Plava": mockImages.blue
     }
   };

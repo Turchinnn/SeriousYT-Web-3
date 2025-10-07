@@ -125,16 +125,16 @@ const Checkout = () => {
       await clearCart();
 
       toast({
-        title: "Porudžbina uspešna!",
-        description: `Vaša porudžbina #${order.order_number} je primljena`,
+        title: "Purchase successful!",
+        description: `Your order #${order.order_number} is accepted.`,
       });
 
       navigate("/");
     } catch (error) {
       console.error("Checkout error:", error);
       toast({
-        title: "Greška",
-        description: "Nije moguće završiti porudžbinu",
+        title: "Error",
+        description: "It's not possible to order",
         variant: "destructive"
       });
     } finally {
@@ -160,10 +160,10 @@ const Checkout = () => {
               className="mb-4 hover:bg-primary/10"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Nazad na prodavnicu
+              Back to webshop
             </Button>
             <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Završi kupovinu
+              Finish order
             </h1>
           </div>
 
@@ -172,9 +172,9 @@ const Checkout = () => {
             <div className="md:col-span-2">
               <Card className="bg-surface-dark border-border">
                 <CardHeader>
-                  <CardTitle className="text-foreground">Informacije za dostavu</CardTitle>
-                  <CardDescription className="text-muted-foreground">
-                    Unesite svoje podatke za dostavu
+                <CardTitle className="text-foreground">Delivery Information</CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  Enter your delivery details
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -186,10 +186,10 @@ const Checkout = () => {
                           name="firstName"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Ime</FormLabel>
+                              <FormLabel>Name</FormLabel>
                               <FormControl>
                                 <Input 
-                                  placeholder="Petar" 
+                                  placeholder="James" 
                                   {...field} 
                                   className="bg-background border-border"
                                 />
@@ -203,10 +203,10 @@ const Checkout = () => {
                           name="lastName"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Prezime</FormLabel>
+                              <FormLabel>Last name</FormLabel>
                               <FormControl>
                                 <Input 
-                                  placeholder="Petrović" 
+                                  placeholder="Smith" 
                                   {...field}
                                   className="bg-background border-border"
                                 />
@@ -226,7 +226,7 @@ const Checkout = () => {
                             <FormControl>
                               <Input 
                                 type="email" 
-                                placeholder="petar@example.com" 
+                                placeholder="james.smith@example.com" 
                                 {...field}
                                 className="bg-background border-border"
                               />
@@ -241,11 +241,11 @@ const Checkout = () => {
                         name="phone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Broj telefona</FormLabel>
+                            <FormLabel>Phone number</FormLabel>
                             <FormControl>
                               <Input 
                                 type="tel" 
-                                placeholder="+381 60 123 4567" 
+                                placeholder="+385 95 123 4567" 
                                 {...field}
                                 className="bg-background border-border"
                               />
@@ -260,10 +260,10 @@ const Checkout = () => {
                         name="address"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Adresa</FormLabel>
+                            <FormLabel>Adresss</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Knez Mihailova 10" 
+                                placeholder="Example Street 10" 
                                 {...field}
                                 className="bg-background border-border"
                               />
@@ -279,10 +279,10 @@ const Checkout = () => {
                           name="city"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Grad</FormLabel>
+                              <FormLabel>City</FormLabel>
                               <FormControl>
                                 <Input 
-                                  placeholder="Beograd" 
+                                  placeholder="Washington" 
                                   {...field}
                                   className="bg-background border-border"
                                 />
@@ -296,10 +296,10 @@ const Checkout = () => {
                           name="zipCode"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Poštanski broj</FormLabel>
+                              <FormLabel>Zip code</FormLabel>
                               <FormControl>
                                 <Input 
-                                  placeholder="11000" 
+                                  placeholder="71000" 
                                   {...field}
                                   className="bg-background border-border"
                                 />
@@ -336,13 +336,13 @@ const Checkout = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center text-foreground">
                     <ShoppingCart className="mr-2 h-5 w-5" />
-                    Pregled porudžbine
+                    View order
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {cartItems.length === 0 ? (
                     <p className="text-muted-foreground text-center py-4">
-                      Vaša korpa je prazna
+                      Your cart is empty
                     </p>
                   ) : (
                     <>
@@ -350,7 +350,7 @@ const Checkout = () => {
                         <div key={item.id} className="flex justify-between text-sm">
                           <div className="flex-1">
                             <p className="font-medium text-foreground">{item.product.name}</p>
-                            <p className="text-muted-foreground">Količina: {item.quantity}</p>
+                            <p className="text-muted-foreground">Quantity: {item.quantity}</p>
                           </div>
                           <p className="font-medium text-foreground">
                             €{(item.product.price * item.quantity).toFixed(2)}
@@ -359,7 +359,7 @@ const Checkout = () => {
                       ))}
                       <Separator className="bg-border" />
                       <div className="flex justify-between font-bold text-lg">
-                        <span className="text-foreground">Ukupno:</span>
+                        <span className="text-foreground">Total:</span>
                         <span className="text-primary">€{totalPrice.toFixed(2)}</span>
                       </div>
                     </>

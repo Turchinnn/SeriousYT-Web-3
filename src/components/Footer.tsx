@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Button2 } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Home, Users, Gift, ShoppingBag, ExternalLink, Mail, PhoneCall, ExternalLinkIcon } from "lucide-react";
-import { FaInstagram } from "react-icons/fa";
+import { FaDiscord, FaInstagram, FaYoutube } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { CommandShortcut } from "./ui/command";
 
@@ -18,8 +18,8 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { name: "Discord", url: "https://discord.gg/serious", icon: Mail },
-    { name: "Mail", url: "https://twitter.com/serious", icon: Mail },
+    { name: "Discord", url: "https://discord.gg/seriousserver", icon: FaDiscord },
+    { name: "YouTube", url: "https://www.youtube.com/@serious8288", icon: FaYoutube },
     { name: "Instagram", url: "https://instagram.com/domagojsmud", icon: FaInstagram },
     { name: "Contact Page", path: "/contact", icon: ExternalLinkIcon },
   ];

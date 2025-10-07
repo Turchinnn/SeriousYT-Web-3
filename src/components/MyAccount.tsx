@@ -17,13 +17,13 @@ import ImageCropper from "./ImageCropper";
 
 interface Profile {
   id: string;
-  user_id: string;
+//  user_id: string;
   full_name: string | null;
   username: string | null;
-  bio: string | null;
+ // bio: string | null;
   avatar_url: string | null;
   phone: string | null;
-  date_of_birth: string | null;
+ // date_of_birth: string | null;
 }
 
 interface MyAccountProps {
@@ -257,7 +257,7 @@ const MyAccount = ({ user, session, onLogout }: MyAccountProps) => {
                   id="full_name"
                   value={formData.full_name}
                   onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                  placeholder="Vaše puno ime"
+                  placeholder="Your Full name"
                 />
               </div>
               <div className="space-y-2">
@@ -266,7 +266,7 @@ const MyAccount = ({ user, session, onLogout }: MyAccountProps) => {
                   id="username"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  placeholder="Vaše korisničko ime"
+                  placeholder="Your Username"
                 />
               </div>
               <div className="space-y-2">
@@ -275,7 +275,7 @@ const MyAccount = ({ user, session, onLogout }: MyAccountProps) => {
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="Vaš broj telefona"
+                  placeholder="+385 95 1234 567"
                 />
               </div>
 
@@ -285,7 +285,7 @@ const MyAccount = ({ user, session, onLogout }: MyAccountProps) => {
                 className="w-full bg-gradient-primary hover:opacity-90 transition-all duration-300 hover:scale-105 magnetic"
               >
                 <Save className="mr-2 h-4 w-4" />
-                {isLoading ? "Čuvanje..." : "Sačuvaj Promene"}
+                {isLoading ? "Saving..." : "Save changes"}
               </Button>
             </div>
           </DialogContent>
