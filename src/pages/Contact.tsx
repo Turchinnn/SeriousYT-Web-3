@@ -54,7 +54,7 @@ const Contact = () => {
           <div className="flex justify-center transform-all duration-2000 animate-float">
             <div className="relative">
               <img 
-                src="https://ibb.co/LdNk7yDV" 
+                src="https://i.ibb.co/v4XwnWC0/mojlogo.png" 
                 alt="logo" 
                 className="w-32 h-32 md:w-40 md:h-40 rounded-full border-2 border-primary shadow-2xl shadow-primary/40 hover:scale-110 transition-transform duration-1200 animate-pulse"
               />
