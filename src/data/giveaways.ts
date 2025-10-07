@@ -29,7 +29,7 @@ export const allGiveaways: Giveaway[] = [
     endDate: "2025-10-03",
     participants: 5,
     url: "https://clash.gg/affiliate/creator/SERIOUS",
-    image: "<img src={NavajaStained}/>",
+    image: "https://i.ibb.co/RGSVRrP4/navajastained.jpg",
     status: "ended",
     value: "$100",
     category: "gaming"
@@ -41,7 +41,7 @@ export const allGiveaways: Giveaway[] = [
     endDate: "2025-08-06",
     participants: 21,
     url: "https://gleam.io/example2",
-    image: "src/assets/shadowdaggersbluesteel.png",
+    image: "https://i.ibb.co/4npC6mcY/shadowdaggersbluesteel.jpg",
     status: "ended",
     value: "$200",
     category: "tech"
@@ -53,7 +53,7 @@ export const allGiveaways: Giveaway[] = [
     endDate: "2025-08-24",
     participants: 18,
     url: "https://gleam.io/example3",
-    image: "src/assets/flipknifeblacklaminate.png",
+    image: "https://i.ibb.co/XxQZRJqR/flipknifeblacklaminate.jpg",
     status: "ended",
     value: "$150",
     category: "gaming"
@@ -65,7 +65,7 @@ export const allGiveaways: Giveaway[] = [
     endDate: "2025-09-17",
     participants: 219,
     url: "https://gleam.io/example4",
-    image: "src/assets/cash3.jpg",
+    image: "https://i.ibb.co/nMWyTvK8/cash3.jpg",
     status: "ended",
     value: "$200",
     category: "tech"
@@ -93,7 +93,20 @@ export const allGiveaways: Giveaway[] = [
     status: "active",
     value: "$9",
     category: "tech"
+  },
+  { 
+    id: 7,
+    title: "CS2 - Gut Knife",
+    description: "Win a Gut Knife | Blue Water! It comes in Factory New condition. Enter now for your chance to add it to your inventory!",
+    endDate: "2025-10-14",
+    participants: 1,
+    url: "https://clash.gg/affiliate/creator/SERIOUS",
+    image: "src/assets/clashggfree.jpg_large",
+    status: "active",
+    value: "$100",
+    category: "tech"
   }
+
 ];
 
 // Helper function to get active giveaways for homepage
