@@ -241,7 +241,7 @@ const Auth = () => {
          <div className="flex justify-center mb-6">
            <div className="w-[108px] h-[108px] bg-gradient-primary rounded-full flex items-center justify-center shadow-lg tranfsorm-all duration 100 pulse-glow">
              <img 
-               src="/src/assets/mojlogo.png" 
+               src="https://i.ibb.co/v4XwnWC0/mojlogo.png" 
                alt="Serious Logo" 
                className="w-[100px] h-[100px] object-contain rounded-full"
              />
