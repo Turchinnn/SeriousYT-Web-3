@@ -128,7 +128,6 @@ const Contact = () => {
            Channel Analytics
          </h2>
        
-         {/* Wrapper koji centrira grid */}
          <div className="flex justify-center">
            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
              
@@ -138,7 +137,7 @@ const Contact = () => {
                    <Users className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
                    <TrendingUp className="h-5 w-5 text-green-500" />
                  </div>
-                 <h3 className="text-3xl font-bold text-foreground mb-2 animate-count" data-target="4.5">0 K</h3>
+                 <h3 className="text-3xl font-bold text-foreground mb-2 animate-count" data-target="4.51">0 K</h3>
                  <p className="text-muted-foreground">K Total Subscribers</p>
                  <p className="text-sm text-green-500 mt-2">+ (growth %) this month</p>
                </CardContent>
@@ -190,7 +189,7 @@ const Contact = () => {
               { 
                 name: "Crypto Casino", 
                 category: "Gambling Site",
-                url: "https://www.logitechg.com",
+                url: "https://www.cryptocasino.com/",
                 image: "https://i.ibb.co/k2HJ3Wv5/casino2.png"
               },              
               { 
@@ -199,10 +198,12 @@ const Contact = () => {
                 url: "https://hydrowash.hr",
                 image: "https://i.ibb.co/XkNWhXzc/Hydrowash2.jpg"
               }
+
+
             ].map((sponsor, index) => (
               <Card 
                 key={index} 
-                className="bg-surface-dark/60 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-500 hover:scale-105 group overflow-hidden glow-on-hover"
+                className="bg-surface-dark/60 backdrop-blur-sm border-border hover:border-primary/70 transition-all duration-500 hover:scale-105 group overflow-hidden hover-lift glow-on-hover"
               >
                 <div className="aspect-square relative group">
                   <img 
@@ -210,7 +211,8 @@ const Contact = () => {
                     alt={sponsor.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent opacity-40 group-hover:opacity-20 transition-opacity"></div>
+                  {/* IZMIJENJENO — overlay se sada širi jednako kao i slika */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent opacity-40 group-hover:opacity-20 transition-opacity transform transition-transform duration-500 group-hover:scale-105"></div>
                 </div>
             
                 {/* Tekst ispod slike */}
@@ -287,4 +289,4 @@ const Contact = () => {
 
 ); }; 
  
- export default Contact;
+export default Contact;

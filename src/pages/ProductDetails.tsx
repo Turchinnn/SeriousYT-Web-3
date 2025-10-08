@@ -25,7 +25,7 @@ interface Product {
 // Mock variations data - in a real app this would come from the database
 const getProductVariations = (productId: string, category: string) => {
   const baseVariations = {
-    color: ["Crna", "Bela", "Siva", "Plava"],
+    color: ["Black", "White", "Gray", "Blue"],
     size: ["XS", "S", "M", "L", "XL", "XXL"]
   };
 
@@ -96,11 +96,11 @@ const ProductDetails = () => {
       .single();
 
     if (error) {
-      console.error("Error fetching product:", error);
-      toast({
-        title: "Greška",
-        description: "Nije moguće učitati proizvod",
-        variant: "destructive"
+    console.error("Error fetching product:", error);
+    toast({
+      title: "Error",
+      description: "Unable to load product",
+      variant: "destructive"
       });
     } else if (data) {
       setProduct(data);
@@ -130,8 +130,8 @@ const ProductDetails = () => {
   const handleAddToCart = () => {
     if (!user) {
       toast({
-        title: "Prijavite se",
-        description: "Morate biti prijavljeni da biste kupovali",
+        title: "Sign In",
+        description: "You must be signed in to make purchases",
         variant: "destructive"
       });
       return;
@@ -140,20 +140,20 @@ const ProductDetails = () => {
     if (!product) return;
 
     // Check if all variations are selected
-    const missingVariations = variationKeys.filter(key => !selectedVariations[key]);
-    if (missingVariations.length > 0) {
-      toast({
-        title: "Izbor varijanti",
-        description: `Molimo izaberite: ${missingVariations.join(", ")}`,
-        variant: "destructive"
-      });
-      return;
-    }
+     const missingVariations = variationKeys.filter(key => !selectedVariations[key]);
+     if (missingVariations.length > 0) {
+       toast({
+         title: "Variation Selection",
+         description: `Please select: ${missingVariations.join(", ")}`,
+         variant: "destructive"
+       });
+       return;
+     }
 
     addToCart(product.id, selectedVariations);
     toast({
-      title: "Dodano u korpu",
-      description: `${product.name} je dodano u korpu`,
+      title: "Added to cart",
+      description: `${product.name} has been added to your cart`,
     });
   };
 
@@ -170,7 +170,7 @@ const ProductDetails = () => {
       <div className="min-h-screen bg-background pt-24 flex items-center justify-center">
         <Card className="bg-surface-dark border-border max-w-md mx-auto">
           <CardHeader>
-            <CardTitle className="text-foreground text-center">Proizvod nije pronađen</CardTitle>
+          <CardTitle className="text-foreground text-center">Product not found</CardTitle>
           </CardHeader>
           <CardContent>
             <Button 
@@ -179,7 +179,7 @@ const ProductDetails = () => {
               className="w-full border-primary text-primary hover:bg-primary/10"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Nazad na webshop
+              Back to webshop
             </Button>
           </CardContent>
         </Card>
@@ -196,7 +196,7 @@ const ProductDetails = () => {
           className="mb-8 border-primary text-primary hover:bg-primary/10"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Nazad na webshop
+          Back to webshop
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -211,7 +211,7 @@ const ProductDetails = () => {
               {product.stock_quantity > 0 && product.stock_quantity <= 10 && (
                 <div className="absolute top-4 left-4">
                   <Badge className="bg-warning/80 text-warning-foreground">
-                    Samo {product.stock_quantity} na stanju
+                    Only {product.stock_quantity} on board
                   </Badge>
                 </div>
               )}
