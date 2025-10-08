@@ -231,7 +231,7 @@ const Navbar = () => {
                         className="flex items-center px-4 py-3 text-base font-medium transition-all duration-500 rounded-xl bg-gradient-primary/20 border border-primary/50 text-primary hover:bg-primary/30 hover:translate-x-4 hover-lift glow-on-hover mt-4"
                       >
                         <User className="mr-2 h-4 w-4" />
-                        Prijava
+                        Sign in
                       </Link>
                     )}
                   </div>
