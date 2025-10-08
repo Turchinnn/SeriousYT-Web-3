@@ -202,7 +202,7 @@ const Contact = () => {
             ].map((sponsor, index) => (
               <Card 
                 key={index} 
-                className="bg-surface-dark/60 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-500 hover:scale-105 group overflow-hidden hover-lift glow-on-hover"
+                className="bg-surface-dark/60 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-500 hover:scale-105 group overflow-hidden glow-on-hover"
               >
                 <div className="aspect-square relative group">
                   <img 
