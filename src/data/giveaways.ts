@@ -99,7 +99,7 @@ export const allGiveaways: Giveaway[] = [
     title: "CS2 - Gut Knife",
     description: "Win a Gut Knife | Blue Water! It comes in Factory New condition. Enter now for your chance to add it to your inventory!",
     endDate: "2025-10-14",
-    participants: 1,
+    participants: 4,
     url: "https://clash.gg/affiliate/creator/SERIOUS",
     image: "https://i.ibb.co/B2spCdnT/Background-5.jpg",
     status: "active",

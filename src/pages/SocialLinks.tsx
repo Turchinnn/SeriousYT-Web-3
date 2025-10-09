@@ -127,7 +127,7 @@ const SocialLinks = () => {
               >
                 <CardHeader>
                   <div className="flex items-center space-x-4">
-                    <div className={`w-12 h-12 ${platform.color} rounded-full flex items-center justify-center`}>
+                    <div className={`w-12 h-12 ${platform.color} rounded-full flex items-center justify-center transition-all duration-3000 animate-pulse`}>
                       <IconComponent className="h-6 w-6 text-white" />
                     </div>
                     <div>
@@ -135,7 +135,7 @@ const SocialLinks = () => {
                         {platform.name}
                         {!platform.isActive && (
                           <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-full">
-                            Uskoro
+                            Soon
                           </span>
                         )}
                       </CardTitle>
@@ -199,7 +199,7 @@ const SocialLinks = () => {
             </p>
               <Button 
               size="lg" 
-              className="bg-[#5865F2] hover:bg-[#008dca]/90 text-white mb-2 transition-all duration-500 hover:hover-lift"
+              className="bg-[#5865F2] hover:bg-[#008dca]/90 text-white mb-2 transition-all duration-500 hover:hover-lift duration-3000 animate-pulse"
             >
               <FaDownload className="mr-2 h-5 w-5" />
               App is comming soon!
