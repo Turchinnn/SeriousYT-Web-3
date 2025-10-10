@@ -46,9 +46,9 @@ const MyAccount = ({ user, session, onLogout }: MyAccountProps) => {
   const [formData, setFormData] = useState({
     full_name: "",
     username: "",
-    bio: "",
+ //   bio: "",
     phone: "",
-    date_of_birth: "",
+ //   date_of_birth: "",
   });
 
   useEffect(() => {
@@ -72,9 +72,9 @@ const MyAccount = ({ user, session, onLogout }: MyAccountProps) => {
         setFormData({
           full_name: data.full_name || "",
           username: data.username || "",
-          bio: data.bio || "",
+      //    bio: data.bio || "",
           phone: data.phone || "",
-          date_of_birth: data.date_of_birth || "",
+       //   date_of_birth: data.date_of_birth || "",
         });
       }
     } catch (error: any) {
