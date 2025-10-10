@@ -30,7 +30,7 @@ export const supabase = createClient<Database>(
 // ✅ Flag to ignore first automatic SIGNED_IN event (page refresh)
 let hasEmittedInitialSession = false;
 
-// ✅ Check existing session on load (so we know if user was already logged in)
+// ✅ Check if there is already an active session (prevents fake "login" on refresh)
 (async () => {
   const { data } = await supabase.auth.getSession();
   if (data.session) {
@@ -38,22 +38,22 @@ let hasEmittedInitialSession = false;
   }
 })();
 
-// ✅ Listen for auth state changes (fixed refresh issue)
+// ✅ Listen for auth state changes (fixed refresh + signup detection)
 supabase.auth.onAuthStateChange(async (event, session) => {
   const user = session?.user;
 
   if (event === "SIGNED_IN" && user) {
-    // ✅ Ignore the first auto-emitted SIGNED_IN (page refresh)
+    // ✅ Ignore the first auto SIGNED_IN (page refresh)
     if (!hasEmittedInitialSession) {
       hasEmittedInitialSession = true;
       return;
     }
 
-    // ✅ Detect signup vs normal login
+    // ✅ Detect if this is a NEW SIGNUP (first time account)
     const created = new Date(user.created_at).getTime();
     const lastLogin = new Date(user.last_sign_in_at ?? "").getTime();
 
-    
+    // Ako su vremenske razlike male -> novi korisnik
     if (Math.abs(created - lastLogin) < 5000) {
       await logSignUp(user);
     } else {
@@ -63,6 +63,19 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 
   if (event === "SIGNED_OUT" && user) {
     await logLogout(user);
+  }
+});
+
+// ✅ Listen for explicit signups (covers all cases, including OAuth)
+supabase.auth.onAuthStateChange(async (event, session) => {
+  if (event === "USER_UPDATED" && session?.user) {
+    const user = session.user;
+    const now = Date.now();
+    const created = new Date(user.created_at).getTime();
+    if (now - created < 10000) {
+      // Korisnik upravo kreirao račun
+      await logSignUp(user);
+    }
   }
 });
 
