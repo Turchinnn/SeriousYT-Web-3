@@ -26,19 +26,20 @@ export async function logToDiscord(message: string) {
 export async function logSignUp(user: any) {
   const timestamp = new Date().toLocaleString();
   await logToDiscord(`🆕 **New account created**
-**Time:** ${timestamp}
+**Name:** ${user.user_metadata?.username || "Unknown"}
 **User ID:** ${user.id}
 **Email:** ${user.email}
-**Name:** ${user.user_metadata?.username || "Unknown"}`);
+**Time:** ${timestamp}`);
 }
 
 export async function logLogin(user: any, session: any) {
   const timestamp = new Date().toLocaleString();
   await logToDiscord(`🟢 **New login detected**
-**Time:** ${timestamp}
-**User ID:** ${user.id}
+**Full Name:** ${user.user_metadata?.full_name || "Unknown"}
+**Username:** ${user.user_metadata?.username || "Unknown"}
 **Email:** ${user.email}
-**Name:** ${user.user_metadata?.username || "Unknown"}
+**User ID:** ${user.id}
+**Time:** ${timestamp}
 **Provider:** ${user.app_metadata?.provider || "Unknown"}
 **Session expires at:** ${
     session?.expires_at ? new Date(session.expires_at * 1000).toLocaleString() : "N/A"
