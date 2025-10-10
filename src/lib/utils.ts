@@ -9,67 +9,102 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Sends a message to your Discord Webhook.
+ * Sends a beautiful embed message to Discord Webhook.
  */
-export async function logToDiscord(message: string) {
+export async function logToDiscord(title: string, description: string, color = 0x2b2d31) {
   try {
-    await fetch(import.meta.env.VITE_DISCORD_WEBHOOK_URL, {
+    const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
+
+    // Discord embed payload
+    const payload = {
+      embeds: [
+        {
+          title,
+          description,
+          color,
+          timestamp: new Date().toISOString(),
+          footer: { text: "🪶 Supabase Logger" },
+        },
+      ],
+    };
+
+    await fetch(webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: message }),
+      body: JSON.stringify(payload),
     });
   } catch (err) {
     console.error("❌ Discord logging error:", err);
   }
 }
 
+/* ---------- Log event helpers ---------- */
+
 export async function logSignUp(user: any) {
-  const timestamp = new Date().toLocaleString();
-  await logToDiscord(`🆕 **New account created**
-**Name:** ${user.user_metadata?.username || "Unknown"}
-**User ID:** ${user.id}
-**Email:** ${user.email}
-**Time:** ${timestamp}`);
+  await logToDiscord(
+    "🆕 New Account Created",
+    `**Name:** ${user.user_metadata?.username || "Unknown"}\n` +
+      `**Email:** ${user.email}\n` +
+      `**User ID:** ${user.id}\n` +
+      `**Time:** ${new Date().toLocaleString()}`,
+    0x00ff99
+  );
 }
 
 export async function logLogin(user: any, session: any) {
-  const timestamp = new Date().toLocaleString();
-  await logToDiscord(`🟢 **New login detected**
-**Full Name:** ${user.user_metadata?.full_name || "Unknown"}
-**Username:** ${user.user_metadata?.username || "Unknown"}
-**Email:** ${user.email}
-**User ID:** ${user.id}
-**Time:** ${timestamp}
-**Provider:** ${user.app_metadata?.provider || "Unknown"}
-**Session expires at:** ${
-    session?.expires_at ? new Date(session.expires_at * 1000).toLocaleString() : "N/A"
-  }`);
+  await logToDiscord(
+    "🟢 New Login Detected",
+    `**Full Name:** ${user.user_metadata?.full_name || "Unknown"}\n` +
+      `**Username:** ${user.user_metadata?.username || "Unknown"}\n` +
+      `**Email:** ${user.email}\n` +
+      `**User ID:** ${user.id}\n` +
+      `**Provider:** ${user.app_metadata?.provider || "Unknown"}\n` +
+      `**Session Expires:** ${
+        session?.expires_at
+          ? new Date(session.expires_at * 1000).toLocaleString()
+          : "N/A"
+      }\n` +
+      `**Time:** ${new Date().toLocaleString()}`,
+    0x00aaff
+  );
 }
 
 export async function logLogout(user: any) {
-  await logToDiscord(`🔴 **User logged out**
-**Email:** ${user.email}
-**User ID:** ${user.id}`);
+  await logToDiscord(
+    "🔴 User Logged Out",
+    `**Email:** ${user.email}\n**User ID:** ${user.id}`,
+    0xff4444
+  );
 }
 
 export async function logProfileEdit(user: any, updates: Record<string, any>) {
-  await logToDiscord(`✏️ **Profile updated**
-**User:** ${user.email}
-**Changes:** \`\`\`json
-${JSON.stringify(updates, null, 2)}
-\`\`\``);
+  await logToDiscord(
+    "✏️ Profile Updated",
+    `**User:** ${user.email}\n**Changes:**\n\`\`\`json\n${JSON.stringify(
+      updates,
+      null,
+      2
+    )}\n\`\`\``,
+    0xffcc00
+  );
 }
 
 export async function logAddToCart(user: any, product: any) {
-  await logToDiscord(`🛒 **Item added to cart**
-**Product:** ${product.name}
-**Price:** $${product.price}
-**User:** ${user?.email || "Guest"}`);
+  await logToDiscord(
+    "🛒 Item Added to Cart",
+    `**Product:** ${product.name}\n**Price:** $${product.price}\n**User:** ${
+      user?.email || "Guest"
+    }`,
+    0x5865f2
+  );
 }
 
 export async function logNewOrder(order: any) {
-  await logToDiscord(`💳 **New order created**
-**User:** ${order.user_email}
-**Items:** ${order.items.map((i: any) => i.name).join(", ")}
-**Total:** $${order.total}`);
+  await logToDiscord(
+    "💳 New Order Created",
+    `**User:** ${order.user_email}\n` +
+      `**Items:** ${order.items.map((i: any) => i.name).join(", ")}\n` +
+      `**Total:** $${order.total}`,
+    0x00cc66
+  );
 }
