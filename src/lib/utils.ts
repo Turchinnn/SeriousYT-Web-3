@@ -29,7 +29,7 @@ export async function logSignUp(user: any) {
 **Time:** ${timestamp}
 **User ID:** ${user.id}
 **Email:** ${user.email}
-**Name:** ${user.user_metadata?.full_name || "Unknown"}`);
+**Name:** ${user.user_metadata?.username || "Unknown"}`);
 }
 
 export async function logLogin(user: any, session: any) {
@@ -38,7 +38,7 @@ export async function logLogin(user: any, session: any) {
 **Time:** ${timestamp}
 **User ID:** ${user.id}
 **Email:** ${user.email}
-**Name:** ${user.user_metadata?.full_name || "Unknown"}
+**Name:** ${user.user_metadata?.username || "Unknown"}
 **Provider:** ${user.app_metadata?.provider || "Unknown"}
 **Session expires at:** ${
     session?.expires_at ? new Date(session.expires_at * 1000).toLocaleString() : "N/A"
