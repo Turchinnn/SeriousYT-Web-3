@@ -27,16 +27,33 @@ export const supabase = createClient<Database>(
   }
 );
 
-// ✅ Listen for auth state changes (fixed SIGNED_UP issue)
+// ✅ Flag to ignore first automatic SIGNED_IN event (page refresh)
+let hasEmittedInitialSession = false;
+
+// ✅ Check existing session on load (so we know if user was already logged in)
+(async () => {
+  const { data } = await supabase.auth.getSession();
+  if (data.session) {
+    hasEmittedInitialSession = true;
+  }
+})();
+
+// ✅ Listen for auth state changes (fixed refresh issue)
 supabase.auth.onAuthStateChange(async (event, session) => {
   const user = session?.user;
 
   if (event === "SIGNED_IN" && user) {
-    // Check if the user is newly created (signup just happened)
+    // ✅ Ignore the first auto-emitted SIGNED_IN (page refresh)
+    if (!hasEmittedInitialSession) {
+      hasEmittedInitialSession = true;
+      return;
+    }
+
+    // ✅ Detect signup vs normal login
     const created = new Date(user.created_at).getTime();
     const lastLogin = new Date(user.last_sign_in_at ?? "").getTime();
 
-    // If created and last_login timestamps are almost the same → new signup
+    
     if (Math.abs(created - lastLogin) < 5000) {
       await logSignUp(user);
     } else {
