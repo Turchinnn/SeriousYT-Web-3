@@ -51,9 +51,9 @@ const Cart = ({ user }: CartProps) => {
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-lg bg-background border-border">
         <SheetHeader>
-          <SheetTitle className="text-foreground">Moja Korpa</SheetTitle>
+          <SheetTitle className="text-foreground">My Cart</SheetTitle>
           <SheetDescription className="text-muted-foreground">
-            {cartItems.length === 0 ? "Vaša korpa je prazna" : `${cartItems.length} proizvod(a) u korpi`}
+            {cartItems.length === 0 ? "Your cart is empty" : `${cartItems.length} items in cart`}
           </SheetDescription>
         </SheetHeader>
         

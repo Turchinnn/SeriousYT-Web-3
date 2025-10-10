@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { User } from "@supabase/supabase-js";
+import { logAddToCart } from "@/lib/utils"; // ✅ added Discord log import
 
 interface CartItem {
   id: string;
@@ -15,11 +16,15 @@ interface CartItem {
   };
 }
 
+/**
+ * Custom React hook for managing the shopping cart
+ */
 export const useCart = (user: User | null) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [cartCount, setCartCount] = useState(0);
 
+  // Load cart items whenever user logs in/out
   useEffect(() => {
     if (user) {
       fetchCartItems();
@@ -29,9 +34,12 @@ export const useCart = (user: User | null) => {
     }
   }, [user]);
 
+  /**
+   * Fetch all cart items for the logged-in user
+   */
   const fetchCartItems = async () => {
     if (!user) return;
-    
+
     setLoading(true);
     const { data, error } = await supabase
       .from("cart_items")
@@ -57,20 +65,27 @@ export const useCart = (user: User | null) => {
     setLoading(false);
   };
 
-  const addToCart = async (productId: string, variations?: Record<string, string>, quantity: number = 1) => {
+  /**
+   * Add an item to the cart or update quantity if it already exists
+   */
+  const addToCart = async (
+    productId: string,
+    variations?: Record<string, string>,
+    quantity: number = 1
+  ) => {
     if (!user) {
       toast({
-        title: "Prijavite se",
-        description: "Morate biti prijavljeni da biste dodali proizvode u korpu",
-        variant: "destructive"
+        title: "Sign in required",
+        description: "You need to be signed in to add products to your cart.",
+        variant: "destructive",
       });
       return;
     }
 
-    const existingItem = cartItems.find(item => item.product_id === productId);
+    const existingItem = cartItems.find((item) => item.product_id === productId);
 
     if (existingItem) {
-      // Update quantity
+      
       const { error } = await supabase
         .from("cart_items")
         .update({ quantity: existingItem.quantity + quantity })
@@ -78,38 +93,52 @@ export const useCart = (user: User | null) => {
 
       if (error) {
         toast({
-          title: "Greška",
-          description: "Nije moguće ažurirati korpu",
-          variant: "destructive"
+          title: "Error",
+          description: "Failed to update cart item.",
+          variant: "destructive",
         });
       } else {
         toast({
-          title: "Korpa ažurirana",
-          description: "Količina proizvoda je ažurirana",
+          title: "Cart updated",
+          description: "Product quantity has been updated.",
         });
+
+        // ✅ Log to Discord
+        await logAddToCart(user, {
+          name: existingItem.product.name,
+          price: existingItem.product.price,
+        });
+
         fetchCartItems();
       }
     } else {
-      // Add new item
-      const { error } = await supabase
-        .from("cart_items")
-        .insert({ 
-          user_id: user.id, 
-          product_id: productId, 
-          quantity 
-        });
+      const { error } = await supabase.from("cart_items").insert({
+        user_id: user.id,
+        product_id: productId,
+        quantity,
+      });
 
       if (error) {
         toast({
-          title: "Greška",
-          description: "Nije moguće dodati proizvod u korpu",
-          variant: "destructive"
+          title: "Error",
+          description: "Failed to add product to cart.",
+          variant: "destructive",
         });
       } else {
         toast({
-          title: "Dodato u korpu",
-          description: "Proizvod je dodat u vašu korpu",
+          title: "Added to cart",
+          description: "Product has been added to your cart.",
         });
+
+        // ✅ Fetch product details to log
+        const { data: productData } = await supabase
+          .from("products")
+          .select("name, price")
+          .eq("id", productId)
+          .single();
+
+        if (productData) await logAddToCart(user, productData);
+
         fetchCartItems();
       }
     }
@@ -128,9 +157,9 @@ export const useCart = (user: User | null) => {
 
     if (error) {
       toast({
-        title: "Greška",
-        description: "Nije moguće ažurirati količinu",
-        variant: "destructive"
+        title: "Error",
+        description: "Failed to update item quantity.",
+        variant: "destructive",
       });
     } else {
       fetchCartItems();
@@ -138,21 +167,18 @@ export const useCart = (user: User | null) => {
   };
 
   const removeFromCart = async (itemId: string) => {
-    const { error } = await supabase
-      .from("cart_items")
-      .delete()
-      .eq("id", itemId);
+    const { error } = await supabase.from("cart_items").delete().eq("id", itemId);
 
     if (error) {
       toast({
-        title: "Greška",
-        description: "Nije moguće ukloniti proizvod",
-        variant: "destructive"
+        title: "Error",
+        description: "Failed to remove product from cart.",
+        variant: "destructive",
       });
     } else {
       toast({
-        title: "Uklonjeno",
-        description: "Proizvod je uklonjen iz korpe",
+        title: "Removed",
+        description: "Product has been removed from your cart.",
       });
       fetchCartItems();
     }
@@ -168,9 +194,9 @@ export const useCart = (user: User | null) => {
 
     if (error) {
       toast({
-        title: "Greška",
-        description: "Nije moguće isprazniti korpu",
-        variant: "destructive"
+        title: "Error",
+        description: "Failed to clear cart.",
+        variant: "destructive",
       });
     } else {
       setCartItems([]);
@@ -180,7 +206,7 @@ export const useCart = (user: User | null) => {
 
   const getTotalPrice = () => {
     return cartItems.reduce((total, item) => {
-      return total + (item.product.price * item.quantity);
+      return total + item.product.price * item.quantity;
     }, 0);
   };
 
@@ -193,6 +219,6 @@ export const useCart = (user: User | null) => {
     removeFromCart,
     clearCart,
     getTotalPrice,
-    refetch: fetchCartItems
+    refetch: fetchCartItems,
   };
 };
