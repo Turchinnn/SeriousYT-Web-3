@@ -121,29 +121,51 @@ const Checkout = () => {
 
       if (itemsError) throw itemsError;
 
-      // ✅ 3. Send Discord notification (in Croatian)
-      const discordMessage = {
-        content: `🛒 **Nova narudžba zaprimljena!**
-━━━━━━━━━━━━━━━━━━━━━━
-👤 **Kupac:** ${data.firstName} ${data.lastName}
-📧 **Email:** ${data.email}
-📞 **Telefon:** ${data.phone}
-🏠 **Adresa:** ${data.address}, ${data.city} (${data.zipCode})
+       // ✅ 3. Send Discord notification (in Croatian, but formatted as an embed)
+       const discordMessage = {
+         embeds: [
+           {
+             title: "🛒 Nova narudžba zaprimljena!",
+             color: 0x2ecc71, // zelena boja
+             description: `
+       👤 **Kupac:** ${data.firstName} ${data.lastName}
+       📧 **Email:** ${data.email}
 
-📦 **Broj artikala:** ${cartItems.length}
-💰 **Ukupno:** €${getTotalPrice().toFixed(2)}
-
-**Detalji narudžbe:**
-${cartItems
-  .map(
-    (item) =>
-      `• ${item.product.name} x${item.quantity} — €${(
-        item.product.price * item.quantity
-      ).toFixed(2)}`
-  )
-  .join("\n")}
-━━━━━━━━━━━━━━━━━━━━━━`,
-      };
+       📞 **Telefon:** ${data.phone}
+       🏠 **Adresa:** ${data.address}, 
+       🏠 **Grad, Zipcode:** ${data.city} (${data.zipCode})
+             `, 
+             fields: [
+               {
+                 name: "📦 Broj artikala",
+                 value: `${cartItems.length}`,
+                 inline: true,
+               },
+               {
+                 name: "💰 Ukupno",
+                 value: `€${getTotalPrice().toFixed(2)}`,
+                 inline: true,
+               },
+               {
+                 name: "🧾 Detalji narudžbe",
+                 value: cartItems
+                   .map(
+                     (item) =>
+                       `• **${item.product.name}** x${item.quantity} — €${(
+                         item.product.price * item.quantity
+                       ).toFixed(2)}`
+                   )
+                   .join("\n"),
+               },
+             ],
+             footer: {
+               text: "T-Notify • Serious Webshop",
+             },
+             timestamp: new Date().toISOString(),
+           },
+         ],
+       };
+       
 
       await fetch("https://discord.com/api/webhooks/1426347668992688209/59Ls79-tG3Az7ot-zb4qphVqX_0XGq6QuccLak1JEXnUNPtIJvgiMzQdQT0gdS9yMaI9", {
         method: "POST",
