@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -26,13 +25,13 @@ const signupSchema = z.object({
   username: z.string().trim().min(3, { message: "Username must be at least 3 characters" }),
 });
 
-// Discord webhook function
-const sendDiscordWebhook = async (message: string) => {
+// Discord webhook sender
+const sendDiscordWebhook = async (payload: any) => {
   try {
     await fetch("https://discord.com/api/webhooks/1426204644773990584/UYu3HFKiH9ED6ULrUFym2rfoxP7DeD5ICgNuaIS_OceWnhl6XqzngKP6VLFTYSeE8a5J", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: message }),
+      body: JSON.stringify(payload),
     });
   } catch (err) {
     console.error("Error sending Discord webhook:", err);
@@ -53,16 +52,12 @@ const Auth = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) navigate("/");
-      }
-    );
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) navigate("/");
+    });
 
-    // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -164,32 +159,36 @@ const Auth = () => {
           variant: "destructive",
         });
       } else if (data.user) {
-        // Upload profile picture
         let avatarUrl = null;
         if (profileImage) {
           avatarUrl = await uploadProfileImage(data.user.id, profileImage);
         }
 
-        // Update user profile
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .update({
-            username: validatedData.username,
-            avatar_url: avatarUrl,
-          })
-          .eq("user_id", data.user.id);
+        await supabase.from("profiles").update({
+          username: validatedData.username,
+          avatar_url: avatarUrl,
+        }).eq("user_id", data.user.id);
 
-        if (profileError) console.error("Profile update error:", profileError);
-
-        // ✅ Send Discord notification in Croatian
-        await sendDiscordWebhook(
-          `👤 **Novi korisnik se registrirao!**
-━━━━━━━━━━━━━━━━━━━━━━
+        // ✅ Send Discord embed notification in Croatian
+        const discordMessage = {
+          embeds: [
+            {
+              title: "👤 Novi korisnik se registrirao!",
+              color: 0x3498db,
+              description: `
 📧 **Email:** ${validatedData.email}
 🏷️ **Korisničko ime:** ${validatedData.username}
-🕐 **Vrijeme:** ${new Date().toLocaleString("hr-HR")}
-━━━━━━━━━━━━━━━━━━━━━━`
-        );
+🕐 **Vrijeme registracije:** ${new Date().toLocaleString("hr-HR")}
+              `,
+              footer: {
+                text: "T-Notify • Serious Webshop",
+              },
+              timestamp: new Date().toISOString(),
+            },
+          ],
+        };
+
+        await sendDiscordWebhook(discordMessage);
 
         toast({
           title: "Success",
@@ -209,20 +208,42 @@ const Auth = () => {
     }
   };
 
-  // Optional: function for profile edit (to trigger webhook)
+  // ✅ Separate profile edit function (does NOT contain JSX)
   const handleProfileEdit = async (updatedData: any) => {
     if (!user) return;
     await supabase.from("profiles").update(updatedData).eq("user_id", user.id);
-    await sendDiscordWebhook(
-      `✏️ **Korisnik je ažurirao svoj profil!**
-━━━━━━━━━━━━━━━━━━━━━━
+
+    const formattedChanges = Object.entries(updatedData)
+      .map(([key, value]) => `• **${key}:** ${value}`)
+      .join("\n");
+
+    const discordMessage = {
+      embeds: [
+        {
+          title: "✏️ Korisnik je ažurirao svoj profil!",
+          color: 0xf1c40f,
+          description: `
 📧 **Email:** ${user.email}
-🏷️ **Promijenjeni podaci:** ${JSON.stringify(updatedData, null, 2)}
 🕐 **Vrijeme:** ${new Date().toLocaleString("hr-HR")}
-━━━━━━━━━━━━━━━━━━━━━━`
-    );
+          `,
+          fields: [
+            {
+              name: "🔧 Promijenjeni podaci",
+              value: formattedChanges || "Nema promjena",
+            },
+          ],
+          footer: {
+            text: "T-Notify • Serious Webshop",
+          },
+          timestamp: new Date().toISOString(),
+        },
+      ],
+    };
+
+    await sendDiscordWebhook(discordMessage);
   };
 
+  // ✅ JSX RENDER (Main UI)
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4 py-16 relative"

@@ -128,12 +128,15 @@ const Checkout = () => {
              title: "🛒 Nova narudžba zaprimljena!",
              color: 0x2ecc71, // zelena boja
              description: `
-       👤 **Kupac:** ${data.firstName} ${data.lastName}
+
+       👤 **User ID:** ${user.id}
+       👤 **Kupac:** ${data.firstName} ${data.lastName} 
        📧 **Email:** ${data.email}
 
        📞 **Telefon:** ${data.phone}
        🏠 **Adresa:** ${data.address}, 
        🏠 **Grad, Zipcode:** ${data.city} (${data.zipCode})
+
              `, 
              fields: [
                {
