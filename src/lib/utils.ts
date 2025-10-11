@@ -23,7 +23,7 @@ export async function logToDiscord(title: string, description: string, color = 0
           description,
           color,
           timestamp: new Date().toISOString(),
-          footer: { text: "🪶 Supabase Logger" },
+          footer: { text: "🪶 Web Logger" },
         },
       ],
     };
@@ -90,14 +90,39 @@ export async function logProfileEdit(user: any, updates: Record<string, any>) {
 }
 
 export async function logAddToCart(user: any, product: any) {
-  await logToDiscord(
-    "🛒 Item Added to Cart",
-    `**Product:** ${product.name}\n**Price:** $${product.price}\n**User:** ${
-      user?.email || "Guest"
-    }`,
-    0x5865f2
-  );
+  try {
+    const webhookUrl =
+      "https://discord.com/api/webhooks/1426347668992688209/59Ls79-tG3Az7ot-zb4qphVqX_0XGq6QuccLak1JEXnUNPtIJvgiMzQdQT0gdS9yMaI9";
+
+    const embed = {
+      embeds: [
+        {
+          title: "🛒 Novi proizvod dodan u košaricu",
+          color: 0x5865f2, // Discord plava
+          description: `
+**Proizvod:** ${product.name}
+💰 **Cijena:** €${product.price.toFixed(2)}
+👤 **Korisnik:** ${user?.email || "Gost"}
+🕐 **Vrijeme:** ${new Date().toLocaleString("hr-HR")}
+          `,
+          footer: {
+            text: "T-Notify • Serious Webshop",
+          },
+          timestamp: new Date().toISOString(),
+        },
+      ],
+    };
+
+    await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(embed),
+    });
+  } catch (err) {
+    console.error("❌ Discord logging error:", err);
+  }
 }
+
 
 export async function logNewOrder(order: any) {
   await logToDiscord(
