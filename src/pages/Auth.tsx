@@ -302,7 +302,7 @@ const Auth = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                       />
-                      {/* 👇 Dodano: Forgot password link */}
+                      {/* forgot pass
                       <div className="text-right mt-1">
                         <button
                           type="button"
@@ -311,7 +311,7 @@ const Auth = () => {
                         >
                           Forgot password?
                         </button>
-                      </div>
+                      </div> */}
                     </div>
                     <Button type="submit" className="w-full" disabled={loading}>
                       {loading ? "Logging in..." : "Login"}
