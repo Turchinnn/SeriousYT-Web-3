@@ -72,7 +72,7 @@ const Navbar = () => {
     { name: "Contact", path: "/contact" },
     { name: "Social Links", path: "/social" },
     { name: "Giveaways", path: "/giveaways" },
-    { name: "Webshop", path: "/webshop" },
+    // { name: "Webshop", path: "/webshop" },
   ];
 
   return (
