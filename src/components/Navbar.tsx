@@ -133,8 +133,8 @@ const Navbar = () => {
               </Link>
             ))}
 
-            {/* Cart */}
-            <Cart user={user} />
+            {/* Cart
+            <Cart user={user} /> */}
 
             {/* My Account / Login */}
             {user && session ? (
