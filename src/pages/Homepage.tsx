@@ -35,10 +35,10 @@ const Homepage = () => {
             <h1 className="text-6xl md:text-8xl font-bold mb-8 bg-gradient-primary bg-clip-text text-transparent animate-fade-in floating">
               Welcome to Serious
             </h1>
-            <p className="text-2xl md:text-3xl text-foreground/90 mb-2 animate-slide-up font-medium text-reveal duration-500 hover:scale-110">
+            <p className="text-2xl md:text-3xl text-foreground/90 mb-2 animate-slide-up font-medium text-reveal duration-500 hover:scale-105">
               Welcome to official website of YouTube streamer Serious.
             </p>
-             <p className="text-2xl md:text-3xl text-foreground/90 mb-12 animate-slide-up font-medium text-reveal duration-500 hover:scale-110">
+             <p className="text-2xl md:text-3xl text-foreground/90 mb-12 animate-slide-up font-medium text-reveal duration-500 hover:scale-105">
               Scroll to see navigation bar.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center animate-scale-in">
@@ -98,7 +98,7 @@ const Homepage = () => {
                   <p className="text-lg text-foreground leading-relaxed mb-6 transition-all duration-500 hover:scale-150">
                     Hrvatski
                   </p>
-                  <p className="text-lg text-muted-foreground leading-relaxed mb-6 transition-all duration-500 hover:scale-110">
+                  <p className="text-lg text-muted-foreground leading-relaxed mb-6 transition-all duration-500 hover:scale-105">
                     Serious je uspješni YouTube kanal. Emitira zanimljive live-ove,
                     uglavnom zabavne prirode. Svojim sadržajem privukao je brojne ljude i stekao nekolicinu
                     uspješnih suradnji. Kanal je aktivan i redovno postavlja nove materijale kako bi
@@ -110,7 +110,7 @@ const Homepage = () => {
                   <p className="text-lg leading-relaxed mt-16 mb-6 transition-all duration-500 hover:scale-150">
                     English
                   </p>
-                  <p className="text-lg text-muted-foreground leading-relaxed transition-all duration-500 hover:scale-110">
+                  <p className="text-lg text-muted-foreground leading-relaxed transition-all duration-500 hover:scale-105">
                   Serious is a successful YouTube channel. It streams engaging live shows, mostly of an entertaining nature. 
                   With its content, it has attracted a large audience and established several successful collaborations. 
                   The channel is active and regularly uploads new material to maintain viewers’ interest.
