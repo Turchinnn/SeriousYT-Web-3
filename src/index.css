@@ -147,7 +147,13 @@ All colors MUST be HSL.
   .pulse-glow {
     animation: pulse-glow 2s ease-in-out infinite alternate;
   }
-  
+
+.pulse-glow2 {
+  animation: pulse-glow2 3.5s ease-in-out infinite;
+  transition: box-shadow 0.4s ease-in-out;
+}
+
+
   @keyframes pulse-glow {
     from {
       box-shadow: 0 0 20px -10px hsl(var(--primary) / 0.4);
@@ -156,6 +162,22 @@ All colors MUST be HSL.
       box-shadow: 0 0 40px -5px hsl(var(--primary) / 0.6);
     }
   }
+
+@keyframes pulse-glow2 {
+  0% {
+    box-shadow: 0 0 6px 1px hsl(var(--primary) / 0.22);
+  }
+  40% {
+    box-shadow: 0 0 7px 2px hsl(var(--primary) / 0.23);
+  }
+  60% {
+    box-shadow: 0 0 8px 3px hsl(var(--primary) / 0.24);
+  }
+  100% {
+    box-shadow: 0 0 7px 2px hsl(var(--primary) / 0.23);
+  }
+}
+
 
   /* Animated Blue Background */
   @keyframes gradient-shift {

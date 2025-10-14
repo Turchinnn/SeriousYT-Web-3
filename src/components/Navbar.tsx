@@ -7,7 +7,6 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser, Session } from "@supabase/supabase-js";
 import MyAccount from "./MyAccount";
-import Cart from "./Cart";
 
 const Navbar = () => {
   const location = useLocation();
@@ -17,6 +16,7 @@ const Navbar = () => {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
+  // --- AUTH ---
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -33,6 +33,7 @@ const Navbar = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // --- SCROLL APPEAR ON HOMEPAGE ---
   useEffect(() => {
     if (location.pathname === "/") {
       setIsVisible(false);
@@ -68,12 +69,16 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-4 left-4 right-4 z-50 
-      bg-background/70 backdrop-blur-lg border border-black/60 shadow-xl 
-      rounded-2xl transition-transform duration-500
+      className={`fixed top-2 left-1/2 -translate-x-1/2 
+      w-[90%] sm:w-[85%] md:w-[75%] lg:w-[55%] xl:w-[55%] 2x1:w-[50%]
+      z-50 bg-background/80 backdrop-blur-lg border border-black/90 shadow-xl 
+      rounded-2xl transition-all duration-700 ease-in-out
       ${isVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"}`}
     >
-      <div className="container mx-auto px-6 py-4">
+      {/* Glow layer */}
+      <div className="absolute inset-0 rounded-2xl pulse-glow2 pointer-events-none z-0"></div>
+
+      <div className="container mx-auto px-6 py-4 relative z-10">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link
@@ -87,7 +92,7 @@ const Navbar = () => {
             }}
           >
             <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 
-          group-hover:rotate-6 transition-all duration-500 pulse-glow">
+            group-hover:rotate-6 transition-all duration-500 pulse-glow">
               <img
                 src="https://i.ibb.co/v4XwnWC0/mojlogo.png"
                 alt="Serious Logo"
@@ -95,12 +100,12 @@ const Navbar = () => {
               />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-primary to-electric-blue-glow bg-clip-text 
-          text-transparent group-hover:scale-105 transition-all duration-300">
+            text-transparent group-hover:scale-105 transition-all duration-300">
               Serious
             </span>
           </Link>
 
-          {/* Desktop Navigation Links */}
+          {/* Desktop Links */}
           <div className="hidden md:flex items-center space-x-2">
             {navItems.map((item, index) => (
               <Link
