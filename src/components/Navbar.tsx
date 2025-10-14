@@ -15,12 +15,9 @@ const Navbar = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
-
-  // 👇 dodano za vidljivost navbara
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
@@ -28,7 +25,6 @@ const Navbar = () => {
       }
     );
 
-    // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -37,26 +33,22 @@ const Navbar = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // 👇 logika za prikaz navbara samo na home page-u
   useEffect(() => {
     if (location.pathname === "/") {
-      // startuje sakriven
       setIsVisible(false);
       let hasScrolledOnce = false;
 
       const handleScroll = () => {
         if (!hasScrolledOnce && window.scrollY > 50) {
-          // čim prvi put skroluje -> pokaži i više ne skrivaj
           setIsVisible(true);
           hasScrolledOnce = true;
-          window.removeEventListener("scroll", handleScroll); // prestaj pratiti scroll
+          window.removeEventListener("scroll", handleScroll);
         }
       };
 
       window.addEventListener("scroll", handleScroll);
       return () => window.removeEventListener("scroll", handleScroll);
     } else {
-      // na drugim stranicama uvek vidljiv
       setIsVisible(true);
     }
   }, [location.pathname]);
@@ -72,12 +64,13 @@ const Navbar = () => {
     { name: "Contact", path: "/contact" },
     { name: "Social Links", path: "/social" },
     { name: "Giveaways", path: "/giveaways" },
-    // { name: "Webshop", path: "/webshop" },
   ];
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50 shadow-lg transition-transform duration-500
+      className={`fixed top-4 left-4 right-4 z-50 
+      bg-background/70 backdrop-blur-lg border border-black/60 shadow-xl 
+      rounded-2xl transition-transform duration-500
       ${isVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"}`}
     >
       <div className="container mx-auto px-6 py-4">
@@ -132,9 +125,6 @@ const Navbar = () => {
                 )}
               </Link>
             ))}
-
-            {/* Cart
-            <Cart user={user} /> */}
 
             {/* My Account / Login */}
             {user && session ? (
