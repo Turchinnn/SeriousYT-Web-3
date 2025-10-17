@@ -19,7 +19,6 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "@/components/ScrollToTop";
 
-
 // 👇 Napravi QueryClient jednom
 const queryClient = new QueryClient();
 
@@ -31,11 +30,19 @@ function App() {
         <Sonner />
         <BrowserRouter>
           <ScrollToTop /> {/* ✅ resetira scroll pri promjeni stranice */}
-          <div className="min-h-screen bg-background flex flex-col">
-            <Navbar />
-            <main className="flex-1 wiggle-background relative">
+          <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+      
               {/* Animated Dark Blue Background */}
               <div className="fixed inset-0 bg-gradient-to-br from-blue-900/10 via-background to-blue-800/10 animate-gradient-shift -z-10"></div>
+
+            {/* Navbar */}
+            <Navbar />
+
+            {/* Glavni sadržaj */}
+            <main className="flex-1 wiggle-background relative z-10 scroll-smooth">
+            {/* iOS blur overlays */}
+              <div className="ios-blur-overlay top-blur-fade" />
+              <div className="ios-blur-overlay bottom-blur-fade" />
 
               <Routes>
                 <Route path="/" element={<Homepage />} />
@@ -49,6 +56,8 @@ function App() {
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
+
+            {/* Footer */}
             <Footer />
           </div>
         </BrowserRouter>

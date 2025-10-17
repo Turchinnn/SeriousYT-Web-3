@@ -66,12 +66,12 @@ const Contact = () => {
         {/* Bilingual About Section */}
         <div className="relative mb-36">
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-px h-full bg-gradient-to-t from-primary/50 via-primary to-primary/50 transform-all duration-1200 animate-pulse"></div>
+            <div className="w-px h-full bg-gradient-to-t from-primary/50 via-primary to-primary/50 transform-all duration-1200 animate-pulse animate-slide-up"></div>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             {/* Croatian Version */}
-            <Card className="bg-surface-dark/80 backdrop-blur-sm border-border hover:border-primary/100 transition-all duration-500 hover-lift overflow-hidden glow-on-hover">
+            <Card className="bg-surface-dark/80 backdrop-blur-sm border-border hover:border-primary/100 transition-all duration-500 hover-lift overflow-hidden glow-on-hover animate-slide-up">
               <CardHeader>
                 <Badge className="w-fit mb-2 bg-primary/20 text-primary">Hrvatski</Badge>
                 <CardTitle className="text-3xl text-foreground">O Meni</CardTitle>
@@ -97,7 +97,7 @@ const Contact = () => {
             </Card>
 
             {/* English Version */}
-            <Card className="bg-surface-dark/80  backdrop-blur-sm border-border hover:border-primary/100 transition-all duration-500 hover-lift overflow-hidden glow-on-hover">
+            <Card className="bg-surface-dark/80  backdrop-blur-sm border-border hover:border-primary/100 transition-all duration-500 hover-lift overflow-hidden glow-on-hover animate-slide-up">
               <CardHeader>
                 <Badge className="w-fit mb-2 bg-primary/20 text-primary">English</Badge>
                 <CardTitle className="text-3xl text-foreground">About Me</CardTitle>
@@ -124,14 +124,14 @@ const Contact = () => {
         </div>
 
        <div className="mb-20">
-         <h2 className="text-4xl font-bold text-center mb-12 text-foreground">
+         <h2 className="text-4xl font-bold text-center mb-12 text-foreground animate-slide-up">
            Channel Analytics
          </h2>
        
          <div className="flex justify-center">
            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
              
-             <Card className="bg-surface-dark/80 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-500 hover:scale-105 group hover-lift glow-on-hover">
+             <Card className="bg-surface-dark/80 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-500 hover:scale-105 group hover-lift glow-on-hover animate-slide-up">
                <CardContent className="p-6">
                  <div className="flex items-center justify-between mb-4">
                    <Users className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
@@ -143,10 +143,10 @@ const Contact = () => {
                </CardContent>
              </Card>
        
-             <Card className="bg-surface-dark/80 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-500 hover:scale-105 group hover-lift glow-on-hover">
+             <Card className="bg-surface-dark/80 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-500 hover:scale-105 group hover-lift glow-on-hover animate-slide-up">
                <CardContent className="p-6">
                  <div className="flex items-center justify-between mb-4">
-                   <Eye className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
+                   <Eye className="h-8 w-8 text-primary group-hover:scale-110 transition-transform " />
                    <TrendingUp className="h-5 w-5 text-green-500" />
                  </div>
                  <h3 className="text-3xl font-bold text-foreground mb-2">
@@ -157,7 +157,7 @@ const Contact = () => {
                </CardContent>
              </Card>
        
-             <Card className="bg-surface-dark/80 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-500 hover:scale-105 group hover-lift glow-on-hover">
+             <Card className="bg-surface-dark/80 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-500 hover:scale-105 group hover-lift glow-on-hover animate-slide-up">
                <CardContent className="p-6">
                  <div className="flex items-center justify-between mb-4">
                    <PlayCircle className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
@@ -177,8 +177,8 @@ const Contact = () => {
 
         {/* Our partners */}
         <div className="mb-24">
-          <h2 className="text-4xl font-bold text-center mb-12 text-foreground ">Our Partners</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 mx-auto gap-6 ">
+          <h2 className="text-4xl font-bold text-center mb-12 text-foreground animate-slide-up">Our Partners</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 mx-auto gap-6 animate-slide-up">
             {[
               { 
                 name: "Clash GG", 
@@ -239,7 +239,7 @@ const Contact = () => {
 
 {/* Contact Section */}
 <div className="pb-32 pt-12">
-  <h2 className="text-4xl font-bold text-center mb-12 text-foreground">Get in Touch</h2>
+  <h2 className="text-4xl font-bold text-center mb-12 text-foreground animate-slide-up">Get in Touch</h2>
   <div className="max-w-4xl mx-auto">
     <Card className="bg-surface-dark/80 backdrop-blur-sm border-border">
       <CardContent className="p-8">
@@ -248,10 +248,10 @@ const Contact = () => {
           {/* Business Email */}
           <Button 
             variant="outline" 
-            className="h-auto flex-col p-6 border-primary/50 hover:bg-primary/10 hover:border-primary transition-all duration-500 group hover-lift glow-on-hover"
+            className="h-auto flex-col p-6 border-primary/50 hover:bg-primary/10 hover:border-primary transition-all duration-500 group hover-lift animate-fade-in glow-on-hover"
             onClick={() => window.location.href = 'mailto:domagoj.smud1@gmail.com'}
           >
-            <Mail className="h-8 w-8 mb-3 text-primary group-hover:scale-110 transition-transform" />
+            <Mail className="h-8 w-8 mb-3 text-primary group-hover:scale-110 transition-transform " />
             <span className="text-lg font-semibold text-foreground">Business Email</span>
             <span className="text-sm text-muted-foreground mt-2">domagoj.smud1@gmail.com</span>
           </Button>
@@ -259,7 +259,7 @@ const Contact = () => {
           {/* Instagram */}
           <Button 
             variant="outline" 
-            className="h-auto flex-col p-6 border-primary/50 hover:bg-primary/10 hover:border-primary transition-all duration-500 group hover-lift glow-on-hover"
+            className="h-auto flex-col p-6 border-primary/50 hover:bg-primary/10 hover:border-primary transition-all duration-500 group hover-lift glow-on-hover animate-fade-in"
             onClick={() => window.open('https://instagram.com/domagojsmud', '_blank')}
           >
             <FaInstagram className="h-8 w-8 mb-3 text-primary group-hover:scale-110 transition-transform" />
@@ -270,7 +270,7 @@ const Contact = () => {
           {/* Discord */}
           <Button 
             variant="outline" 
-            className="h-auto flex-col p-6 border-primary/50 hover:bg-primary/10 hover:border-primary transition-all duration-500 group hover-lift glow-on-hover"
+            className="h-auto flex-col p-6 border-primary/50 hover:bg-primary/10 hover:border-primary transition-all duration-500 group hover-lift glow-on-hover animate-fade-in"
             onClick={() => window.open('https://discord.gg/seriousserver', '_blank')}
           >
             <FaDiscord className="h-12 w-12 mb-3 text-primary group-hover:scale-110 transition-transform" />

@@ -38,7 +38,7 @@ const Homepage = () => {
             <p className="text-2xl md:text-3xl text-foreground/90 mb-2 animate-slide-up font-medium text-reveal duration-500 hover:scale-105">
               Welcome to official website of YouTube streamer Serious.
             </p>
-             <p className="text-2xl md:text-3xl text-foreground/90 mb-12 animate-slide-up font-medium text-reveal duration-500 hover:scale-105">
+             <p className="text-2xl md:text-3xl text-foreground/90 mb-20 animate-slide-up font-medium text-reveal duration-500 hover:scale-105">
               Scroll to see navigation bar.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center animate-scale-in">
