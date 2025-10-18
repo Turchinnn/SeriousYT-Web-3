@@ -8,35 +8,40 @@ import { useEffect } from "react";
 const Contact = () => {
   useEffect(() => {
     const counters = document.querySelectorAll('.animate-count');
-    
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const counter = entry.target as HTMLElement;
           const target = parseFloat(counter.dataset.target || '0');
-          const increment = target / 100;
-          let current = 0;
-          
-          const updateCounter = () => {
-            current += increment;
-            if (current < target) {
-              counter.innerText = current.toFixed(1);
+          const duration = 1500; // trajanje animacije u ms (2 sekunde)
+          const startTime = performance.now();
+
+          const updateCounter = (currentTime: number) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1); // od 0 do 1
+            const value = target * progress;
+
+            counter.innerText = value.toFixed(1);
+
+            if (progress < 1) {
               requestAnimationFrame(updateCounter);
             } else {
               counter.innerText = target.toString();
             }
           };
-          
-          updateCounter();
+
+          requestAnimationFrame(updateCounter);
           observer.unobserve(counter);
         }
       });
     });
-    
+
     counters.forEach(counter => observer.observe(counter));
-    
+
     return () => observer.disconnect();
   }, []);
+
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden pt-20">
@@ -58,7 +63,7 @@ const Contact = () => {
                 alt="logo" 
                 className="w-32 h-32 md:w-40 md:h-40 rounded-full border-2 border-primary shadow-2xl shadow-primary/40 hover:scale-110 transition-transform duration-1200 animate-pulse"
               />
-              <div className="absolute inset-0 rounded-full bg-gradient-primary transition-transform duration-1200 opacity-30 blur-x1 animate-pulse"></div>
+              <div className="absolute inset-0 rounded-full bg-gradient-primary transition-transform duration-1200 opacity-30 blur-x1"></div>
             </div>
           </div>
         </div>
@@ -137,9 +142,11 @@ const Contact = () => {
                    <Users className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
                    <TrendingUp className="h-5 w-5 text-green-500" />
                  </div>
-                 <h3 className="text-3xl font-bold text-foreground mb-2 animate-count" data-target="4.51">0 K</h3>
-                 <p className="text-muted-foreground">K Total Subscribers</p>
-                 <p className="text-sm text-green-500 mt-2">+ (growth %) this month</p>
+                 <h3 className="text-3xl font-bold text-foreground mb-2">
+                   <span className="animate-count" data-target="4.54">0</span> K
+                 </h3>
+                 <p className="text-muted-foreground">Avg. Views</p>
+                 <p className="text-sm text-green-500 mt-2">+8% rate</p>
                </CardContent>
              </Card>
        
@@ -177,7 +184,7 @@ const Contact = () => {
 
         {/* Our partners */}
         <div className="mb-24">
-          <h2 className="text-4xl font-bold text-center mb-12 text-foreground animate-slide-up">Our Partners</h2>
+          <h2 className="text-4xl font-bold text-center mb-16 text-foreground animate-slide-up">Our Partners</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 mx-auto gap-6 animate-slide-up">
             {[
               { 

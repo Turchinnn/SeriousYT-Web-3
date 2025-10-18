@@ -14,14 +14,14 @@ const Footer = () => {
     { name: "Contact", path: "/contact", icon: PhoneCall },
     { name: "Social Links", path: "/social", icon: Users },
     { name: "Giveaways", path: "/giveaways", icon: Gift },
-    { name: "Webshop", path: "/webshop", icon: ShoppingBag },
+    // { name: "Webshop", path: "/webshop", icon: ShoppingBag },
   ];
 
   const socialLinks = [
     { name: "Discord", url: "https://discord.gg/seriousserver", icon: FaDiscord },
     { name: "YouTube", url: "https://www.youtube.com/@serious8288", icon: FaYoutube },
     { name: "Instagram", url: "https://instagram.com/domagojsmud", icon: FaInstagram },
-    { name: "Contact Page", path: "/contact", icon: ExternalLinkIcon },
+    { name: "Contact", path: "/contact", icon: ExternalLinkIcon },
   ];
 
   return (
@@ -34,10 +34,10 @@ const Footer = () => {
               Serious
             </h3>
             <p className="text-muted-foreground">
-              Your source for all things about Serious.
+              Your source for everything related to Serious.
             </p>
           </div>
-
+    
           {/* Navigation Links */}
           <div className="space-y-4 space-x-0">
             <h4 className="text-lg font-semibold text-foreground">Quick Links</h4>
@@ -88,6 +88,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
           
           <p>&copy; 2025 Serious. All rights reserved.</p>
+          
           <div className="flex space-x-4 mt-4 md:mt-0">
             <Button variant="link" size="sm" className="text-muted-foreground hover:text-primary">
               Privacy Policy

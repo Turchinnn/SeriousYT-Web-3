@@ -127,7 +127,7 @@ const Webshop = () => {
                 ? "bg-gradient-primary text-primary-foreground" 
                 : "border-primary/50 hover:bg-primary/10"}
             >
-              {category === "all" ? "Svi proizvodi" : category}
+              {category === "all" ? "All Products" : category}
             </Button>
           ))}
         </div>

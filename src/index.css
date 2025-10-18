@@ -257,7 +257,34 @@ All colors MUST be HSL.
     animation: wiggle-move 20s ease-in-out infinite;
     z-index: -1;
   }
+
+  .navbar-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  box-shadow: 0 0 20px rgba(0, 102, 255, 0.4),
+              0 0 40px rgba(0, 102, 255, 0.3),
+              0 0 60px rgba(0, 102, 255, 0.2);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+  animation: glowPulse 3s ease-in-out infinite alternate;
+}
   
+  /* Lagani puls (fade in/out) */
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+  }
+  
+  /* Glow puls */
+  @keyframes glowPulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.5; }
+  }
+
   @keyframes wiggle-move {
     0%, 100% { 
       transform: translateX(0%) translateY(0%) rotate(0deg) scale(1);
@@ -287,6 +314,67 @@ All colors MUST be HSL.
       box-shadow: 0 0 20px rgba(59, 130, 246, 1), 0 0 40px rgba(59, 130, 246, 0.8), 0 0 60px rgba(59, 130, 246, 0.6);
     }
   }
+
+/* NAVBAR mora biti position: relative; i overflow: hidden */
+nav {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glow sloj */
+.navbar-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  box-shadow: 0 0 20px rgba(0, 102, 255, 0.4),
+              0 0 40px rgba(0, 102, 255, 0.3),
+              0 0 60px rgba(0, 102, 255, 0.2);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+  animation: glowPulse 3s ease-in-out infinite alternate;
+}
+
+/* Lagani puls */
+@keyframes glowPulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.5; }
+}
+
+/* Light sweep sloj */
+.light-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.light-sweep::before {
+  content: "";
+  position: absolute;
+  top: -60%;
+  left: -120%;
+  width: 250%;
+  height: 20%;
+  background: linear-gradient(
+    45deg,
+    transparent 0%,
+    rgb(81, 127, 255) 50%,
+    transparent 100%
+  );
+  transform: rotate(45deg);
+  filter: blur(36px);
+  animation: sweep 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes sweep {
+  0% { transform: translateX(-50%) rotate(45deg); }
+  100% { transform: translateX(50%) rotate(45deg); }
+}
+
+
 
 /* === iOS Style Fade Blur Overlays === */
 .ios-blur-overlay {
