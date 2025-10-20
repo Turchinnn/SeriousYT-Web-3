@@ -1,22 +1,56 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { createClient } from "@supabase/supabase-js";
 
+/* -------------------------------------------------------
+   🧩 SUPABASE CLIENT SETUP
+------------------------------------------------------- */
 
-/**
- * Combines Tailwind and conditional classes.
- */
+// ✅ Radi i u Next.js i u Vite okruženju
+const supabaseUrl =
+  typeof process !== "undefined"
+    ? process.env.NEXT_PUBLIC_SUPABASE_URL
+    : import.meta.env.VITE_SUPABASE_URL;
+
+const supabaseAnonKey =
+  typeof process !== "undefined"
+    ? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    : import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// ✅ Zaštita od praznih varijabli
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error("❌ Supabase env vars are missing!");
+}
+
+export const supabase = createClient(supabaseUrl!, supabaseAnonKey!);
+
+/* -------------------------------------------------------
+   🎨 CLASSNAME HELPER
+------------------------------------------------------- */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/**
- * Sends a beautiful embed message to Discord Webhook.
- */
-export async function logToDiscord(title: string, description: string, color = 0x2b2d31) {
-  try {
-    const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
+/* -------------------------------------------------------
+   🔔 DISCORD LOGGING HELPERS
+------------------------------------------------------- */
 
-    // Discord embed payload
+export async function logToDiscord(
+  title: string,
+  description: string,
+  color = 0x2b2d31
+) {
+  try {
+    const webhookUrl =
+      typeof process !== "undefined"
+        ? process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_URL
+        : import.meta.env.VITE_DISCORD_WEBHOOK_URL;
+
+    if (!webhookUrl) {
+      console.warn("⚠️ No Discord webhook URL found, skipping log.");
+      return;
+    }
+
     const payload = {
       embeds: [
         {
@@ -93,13 +127,20 @@ export async function logProfileEdit(user: any, updates: Record<string, any>) {
 export async function logAddToCart(user: any, product: any) {
   try {
     const webhookUrl =
-      "https://discord.com/api/webhooks/1426347668992688209/59Ls79-tG3Az7ot-zb4qphVqX_0XGq6QuccLak1JEXnUNPtIJvgiMzQdQT0gdS9yMaI9";
+      typeof process !== "undefined"
+        ? process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_URL
+        : import.meta.env.VITE_DISCORD_WEBHOOK_URL;
+
+    if (!webhookUrl) {
+      console.warn("⚠️ No Discord webhook URL found for cart log.");
+      return;
+    }
 
     const embed = {
       embeds: [
         {
           title: "🛒 Novi proizvod dodan u košaricu",
-          color: 0x5865f2, // Discord plava
+          color: 0x5865f2,
           description: `
 **Proizvod:** ${product.name}
 💰 **Cijena:** €${product.price.toFixed(2)}
@@ -123,7 +164,6 @@ export async function logAddToCart(user: any, product: any) {
     console.error("❌ Discord logging error:", err);
   }
 }
-
 
 export async function logNewOrder(order: any) {
   await logToDiscord(

@@ -19,6 +19,8 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "@/components/ScrollToTop";
 
+import Admin from "./pages/Admin";
+
 // 👇 Napravi QueryClient jednom
 const queryClient = new QueryClient();
 
@@ -53,6 +55,7 @@ function App() {
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>

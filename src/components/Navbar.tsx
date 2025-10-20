@@ -1,22 +1,26 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Menu, User } from "lucide-react";
+import { Menu, User, Shield } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser, Session } from "@supabase/supabase-js";
 import MyAccount from "./MyAccount";
-import Cart from "@/components/Cart";
 import "@/index.css";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+
+  // 👇 ovdje definiraš admin email
+  const ADMIN_EMAIL = "sven.doring12310@gmail.com";
 
   // --- AUTH ---
   useEffect(() => {
@@ -35,7 +39,14 @@ const Navbar = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // --- SCROLL APPEAR ON HOMEPAGE ---
+  // 🚫 Zaštita da samo admin može vidjeti /admin stranicu
+  useEffect(() => {
+    if (location.pathname.startsWith("/admin") && user && user.email !== ADMIN_EMAIL) {
+      navigate("/"); // preusmjeri na Home ako nije admin
+    }
+  }, [location.pathname, user]);
+
+  // --- SCROLL ANIMACIJA ---
   useEffect(() => {
     if (location.pathname === "/") {
       setIsVisible(false);
@@ -62,12 +73,15 @@ const Navbar = () => {
     setIsAccountOpen(false);
   };
 
+  // 👇 Navigacija — dodali smo Admin s ikonicom samo ako je korisnik admin
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Contact", path: "/contact" },
     { name: "Social Links", path: "/social" },
     { name: "Giveaways", path: "/giveaways" },
-    // { name: "Webshop", path: "/webshop" },
+    ...(user?.email === ADMIN_EMAIL
+      ? [{ name: "Admin", path: "/admin", icon: <Shield className="h-4 w-4 mr-2 text-primary" /> }]
+      : []),
   ];
 
   return (
@@ -79,7 +93,8 @@ const Navbar = () => {
       style={{
         transform: `translate(-50%, ${isVisible ? "0" : "-150%"})`,
         opacity: isVisible ? 1 : 0,
-        transition: "transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.7s ease-in-out",
+        transition:
+          "transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.7s ease-in-out",
       }}
     >
       {/* Glow sloj */}
@@ -132,11 +147,12 @@ const Navbar = () => {
                   }
                 }}
               >
-                {item.name}
+                <span className="flex items-center">
+                  {item.icon && item.icon}
+                  {item.name}
+                </span>
               </Link>
             ))}
-
-          {/* <Cart user={user} /> */}
 
             {user && session ? (
               <Popover open={isAccountOpen} onOpenChange={setIsAccountOpen}>
@@ -200,20 +216,14 @@ const Navbar = () => {
                       <Link
                         key={item.path}
                         to={item.path}
-                        onClick={(e) => {
-                          if (item.path === window.location.pathname) {
-                            e.preventDefault();
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                          }
-                          setIsOpen(false);
-                        }}
+                        onClick={() => setIsOpen(false)}
                         className={`flex items-center px-4 py-3 text-base font-medium transition-all duration-300 rounded-xl hover:bg-accent/40 ${
                           location.pathname === item.path
                             ? "text-primary bg-accent/30 border-l-4 border-primary shadow-md"
                             : "text-muted-foreground hover:text-foreground"
                         }`}
-                        style={{ animationDelay: `${index * 100}ms` } as React.CSSProperties}
                       >
+                        {item.icon && item.icon}
                         {item.name}
                       </Link>
                     ))}

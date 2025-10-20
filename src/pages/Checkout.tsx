@@ -87,7 +87,7 @@ const Checkout = () => {
     setLoading(true);
 
     try {
-      // ✅ 1. Create order
+      // kreiranje
       const { data: order, error: orderError } = await supabase
         .from("orders")
         .insert({
@@ -107,7 +107,7 @@ const Checkout = () => {
 
       if (orderError) throw orderError;
 
-      // ✅ 2. Create order items
+      // napravi order iteme
       const orderItems = cartItems.map((item) => ({
         order_id: order.id,
         product_id: item.product_id,
@@ -121,12 +121,12 @@ const Checkout = () => {
 
       if (itemsError) throw itemsError;
 
-       // ✅ 3. Send Discord notification (in Croatian, but formatted as an embed)
+       // posli hrvatsku verziju notifikacije
        const discordMessage = {
          embeds: [
            {
              title: "🛒 Nova narudžba zaprimljena!",
-             color: 0x2ecc71, // zelena boja
+             color: 0x2ecc71, // zelena farba
              description: `
 
        👤 **User ID:** ${user.id}
@@ -176,7 +176,7 @@ const Checkout = () => {
         body: JSON.stringify(discordMessage),
       });
 
-      // ✅ 4. Clear cart and show success message
+      // pocisti korpo i posli success notify na webo
       await clearCart();
 
       toast({
