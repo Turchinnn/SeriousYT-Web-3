@@ -28,11 +28,14 @@ const signupSchema = z.object({
 // Discord webhook sender
 const sendDiscordWebhook = async (payload: any) => {
   try {
-    await fetch("https://discord.com/api/webhooks/1426204644773990584/UYu3HFKiH9ED6ULrUFym2rfoxP7DeD5ICgNuaIS_OceWnhl6XqzngKP6VLFTYSeE8a5J", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    await fetch(
+      "https://discord.com/api/webhooks/1426204644773990584/UYu3HFKiH9ED6ULrUFym2rfoxP7DeD5ICgNuaIS_OceWnhl6XqzngKP6VLFTYSeE8a5J",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    );
   } catch (err) {
     console.error("Error sending Discord webhook:", err);
   }
@@ -52,20 +55,20 @@ const Auth = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Subscribe to auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) navigate("/");
     });
 
+    // Get current session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) navigate("/");
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,6 +93,7 @@ const Auth = () => {
           title: "Success",
           description: "You have successfully logged in!",
         });
+        navigate("/"); // ✅ Redirect only after successful login
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -169,7 +173,6 @@ const Auth = () => {
           avatar_url: avatarUrl,
         }).eq("user_id", data.user.id);
 
-        // ✅ Send Discord embed notification in Croatian
         const discordMessage = {
           embeds: [
             {
@@ -180,9 +183,7 @@ const Auth = () => {
 🏷️ **Korisničko ime:** ${validatedData.username}
 🕐 **Vrijeme registracije:** ${new Date().toLocaleString("hr-HR")}
               `,
-              footer: {
-                text: "T-Notify • Serious Webshop",
-              },
+              footer: { text: "T-Notify • Serious Webshop" },
               timestamp: new Date().toISOString(),
             },
           ],
@@ -208,8 +209,7 @@ const Auth = () => {
     }
   };
 
-  // ✅ Separate profile edit function (does NOT contain JSX)
-  const handleProfileEdit = async (updatedData: any) => {
+    const handleProfileEdit = async (updatedData: any) => {
     if (!user) return;
     await supabase.from("profiles").update(updatedData).eq("user_id", user.id);
 
@@ -243,7 +243,6 @@ const Auth = () => {
     await sendDiscordWebhook(discordMessage);
   };
 
-  // ✅ JSX RENDER (Main UI)
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4 py-16 relative"
@@ -302,16 +301,6 @@ const Auth = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                       />
-                      {/* forgot pass
-                      <div className="text-right mt-1">
-                        <button
-                          type="button"
-                          onClick={() => navigate("/forgotpassword")}
-                          className="text-sm text-primary hover:underline"
-                        >
-                          Forgot password?
-                        </button>
-                      </div> */}
                     </div>
                     <Button type="submit" className="w-full" disabled={loading}>
                       {loading ? "Logging in..." : "Login"}

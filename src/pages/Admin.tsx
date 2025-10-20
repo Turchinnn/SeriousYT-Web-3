@@ -16,13 +16,14 @@ import {
 } from "lucide-react";
 import { toast } from "../hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { Trash2 } from "lucide-react";
+
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL!,
   import.meta.env.VITE_SUPABASE_ANON_KEY!
 );
 
-// ✅ Lista admin emailova
 const ADMIN_EMAILS = ["sven.doring12310@gmail.com", "dominikdosen98@gmail.com"];
 
 const STATUSES = ["pending", "processing", "delivered", "cancelled"];
@@ -179,6 +180,46 @@ export default function AdminPage() {
     }
   };
 
+  const deleteOrder = async (orderId: string) => {
+  const confirmDelete = confirm(
+    "Are you sure you want to delete this order? This action cannot be undone."
+  );
+  if (!confirmDelete) return;
+
+  try {
+    setUpdatingMap((s) => ({ ...s, [orderId]: true }));
+
+    const { error } = await supabase
+      .from("orders")
+      .delete()
+      .eq("id", orderId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: `Failed to delete order: ${error.message}`,
+        variant: "destructive",
+      });
+    } else {
+      // Ukloni narudžbu iz lokalnog state-a
+      setOrders((curr) => curr.filter((o) => o.id !== orderId));
+      toast({
+        title: "Deleted",
+        description: "Order has been deleted successfully.",
+      });
+    }
+  } catch (err: any) {
+    toast({
+      title: "Error",
+      description: "An error occurred while deleting the order.",
+      variant: "destructive",
+    });
+  } finally {
+    setUpdatingMap((s) => ({ ...s, [orderId]: false }));
+  }
+};
+
+
   const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount ?? o.total ?? 0), 0);
 
   if (!authorized) {
@@ -330,6 +371,17 @@ return (
                   </div>
                 </div>
 
+              <div>
+                <button
+                  onClick={() => deleteOrder(order.id)}
+                  disabled={!!updatingMap[order.id]}
+                  className="mt-1 text-rose-400 hover:text-rose-500 transition-colors"
+                  title="Delete Order"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+              
                 <div className="flex flex-col items-end gap-2">
                   <select
                     id={`status-${order.id}`}
@@ -346,6 +398,8 @@ return (
                   </select>
                 </div>
               </CardHeader>
+
+
 
               <CardContent className="relative z-10 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-slate-800/30 rounded-xl border border-slate-700/30">
