@@ -22,12 +22,24 @@ export interface Giveaway {
 
 
 export const allGiveaways: Giveaway[] = [
+    {
+    id: 27,
+    title: "CS2 - Survival Knife | Clash.gg",
+    description: "Win a Navaja Knife | Stained! It comes in Minimal Wear type condition. Enter now for your chance to add it to your inventory!",
+    endDate: "2025-11-02",
+    participants: 4,
+    url: "https://clash.gg/affiliate/creator/SERIOUS",
+    image: "https://i.ibb.co/0jC8WsJL/sk.png",
+    status: "active",
+    value: "$100",
+    category: "gaming"
+  },
   {
-    id: 1,
-    title: "CS2 - Navaja Knife",
+    id: 26,
+    title: "CS2 - Navaja Knife | Clash.gg",
     description: "Win a Navaja Knife | Stained! It comes in Minimal Wear type condition. Enter now for your chance to add it to your inventory!",
     endDate: "2025-10-03",
-    participants: 5,
+    participants: 7,
     url: "https://clash.gg/affiliate/creator/SERIOUS",
     image: "https://i.ibb.co/RGSVRrP4/navajastained.jpg",
     status: "ended",
@@ -35,8 +47,8 @@ export const allGiveaways: Giveaway[] = [
     category: "gaming"
   },
   {
-    id: 2,
-    title: "CS2 - Shadow Daggers",
+    id: 19,
+    title: "CS2 - Shadow Daggers | Clash.gg",
     description: "Win Shadow Daggers | Blue Steel! These Factory New dual daggers feature the sleek Blue Steel finish. Enter now for your chance to add them to your inventory!",
     endDate: "2025-08-06",
     participants: 21,
@@ -47,8 +59,8 @@ export const allGiveaways: Giveaway[] = [
     category: "tech"
   },
   {
-    id: 3,
-    title: "CS2 - Flip Knife",
+    id: 25,
+    title: "CS2 - Flip Knife | Clash.gg",
     description: "Win a Flip Knife | Black Laminate! It comes in Minimal Wear condition. Enter now for your chance to add it to your inventory!",
     endDate: "2025-08-24",
     participants: 18,
@@ -59,7 +71,7 @@ export const allGiveaways: Giveaway[] = [
     category: "gaming"
   },
   {
-    id: 4,
+    id: 24,
     title: "1x | $200 PayPal",
     description: "Be the most active in the chat and get a chance to win $150 sent straight to your PayPal!",
     endDate: "2025-09-17",
@@ -71,7 +83,7 @@ export const allGiveaways: Giveaway[] = [
     category: "tech"
   },
   {
-    id: 5,
+    id: 23,
     title: "2x | $150 Paypal",
     description: "Be the most active in the chat and get a chance to win $150 sent straight to your PayPal!",
     endDate: "2025-09-15",
@@ -83,7 +95,7 @@ export const allGiveaways: Giveaway[] = [
     category: "gaming"
   },
   {
-    id: 6,
+    id: 22,
     title: "Clash.gg - Free Battle",
     description: "Join our free Case Battle on Clash.gg! Watch the Serious channel live streams and follow along to participate and win awesome rewards.",
     endDate: "2025-08-02",
@@ -95,18 +107,29 @@ export const allGiveaways: Giveaway[] = [
     category: "tech"
   },
   { 
-    id: 7,
-    title: "CS2 - Gut Knife",
+    id: 21,
+    title: "CS2 - Gut Knife | Clash.gg",
     description: "Win a Gut Knife | Blue Water! It comes in Factory New condition. Enter now for your chance to add it to your inventory!",
     endDate: "2025-10-14",
     participants: 5,
     url: "https://clash.gg/affiliate/creator/SERIOUS",
     image: "https://i.ibb.co/B2spCdnT/Background-5.jpg",
-    status: "active",
+    status: "ended",
+    value: "$100",
+    category: "tech"
+  },
+  { 
+    id: 20,
+    title: "CS2 - Navaja Knife | Clash.gg",
+    description: "Win a Gut Knife | Blue Steel! It comes in Factory New condition. Enter now for your chance to add it to your inventory!",
+    endDate: "2025-10-23",
+    participants: 10,
+    url: "https://clash.gg/affiliate/creator/SERIOUS",
+    image: "https://cdn.tradeit.gg/csgo/%E2%98%85%20Navaja%20Knife%20-%20Blue%20Steel%20(Factory%20New)_650x325.webp",
+    status: "ended",
     value: "$100",
     category: "tech"
   }
-
 ];
 
 // Helper function to get active giveaways for homepage

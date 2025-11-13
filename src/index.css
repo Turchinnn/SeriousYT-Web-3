@@ -37,6 +37,10 @@ All colors MUST be HSL.
     --input: 0 0% 12%;
     --ring: 217 91% 60%;
 
+    --glass: "backdrop-blur-xl bg-white/15 border border-white/25 text-white shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] hover:bg-white/20 hover:shadow-[0_8px_32px_0_rgba(31,38,135,0.25)]",
+        "glass-primary": "backdrop-blur-xl bg-gradient-to-br from-primary/20 to-secondary/20 border border-white/25 text-white shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] hover:from-primary/25 hover:to-secondary/25 hover:shadow-[0_8px_32px_0_rgba(31,38,135,0.25)]",
+        "glass-accent": "backdrop-blur-xl bg-gradient-to-br from-accent/20 to-primary/20 border border-white/25 text-white shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] hover:from-accent/25 hover:to-primary/25 hover:shadow-[0_8px_32px_0_rgba(31,38,135,0.25)]",
+
     /* Custom design tokens */
     --electric-blue: 217 91% 60%;
     --electric-blue-glow: 217 91% 70%;
@@ -381,7 +385,7 @@ nav {
   position: fixed;
   left: 0;
   right: 0;
-  z-index: 50;
+  z-index: 9999;
   pointer-events: none;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -390,14 +394,14 @@ nav {
 /* Gornji fade blur — tamniji + blur efekt */
 .top-blur-fade {
   top: 0;
-  height: 220px;
+  height: 300px;
   position: fixed;
   left: 0;
   right: 0;
   z-index: 50;
   pointer-events: none;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(50px);
 
   /* tamniji overlay preko blura */
   background: linear-gradient(
@@ -426,14 +430,14 @@ nav {
 
 .bottom-blur-fade {
   bottom: 0;
-  height: 220px;
+  height: 300px;
   position: fixed;
   left: 0;
   right: 0;
-  z-index: 50;
+  z-index: 9999;
   pointer-events: none;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(50px);
 
   /* tamniji overlay prema dole */
   background: linear-gradient(

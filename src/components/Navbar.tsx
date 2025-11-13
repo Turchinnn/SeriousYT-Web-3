@@ -1,13 +1,17 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Button2 } from "@/components/ui/button2";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Menu, User, Shield } from "lucide-react";
+import { Menu, User, Shield, PhoneCall, ExternalLink, Home, HomeIcon, GiftIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser, Session } from "@supabase/supabase-js";
 import MyAccount from "./MyAccount";
 import "@/index.css";
+import { FaExternalLinkAlt, FaLinkedin, FaMobileAlt } from "react-icons/fa";
+import Homepage from "@/pages/Homepage";
+import { ScrollProgress } from "./ScrollProgress";
 
 const Navbar = () => {
   const location = useLocation();
@@ -75,10 +79,10 @@ const Navbar = () => {
 
   // 👇 Navigacija — dodali smo Admin s ikonicom samo ako je korisnik admin
   const navItems = [
-    { name: "Home", path: "/" },
-    { name: "Contact", path: "/contact" },
-    { name: "Social Links", path: "/social" },
-    { name: "Giveaways", path: "/giveaways" },
+    { name: "Home", path: "/", icon: <HomeIcon className="h-4 w-4 mr-2 text-primary"/> },
+    { name: "Contact", path: "/contact", icon: <PhoneCall className="h-4 w-4 mr-2 text-primary"/> },
+    { name: "Social Links", path: "/social", icon: <ExternalLink className="h-4 w-4 mr-2 text-primary"/>},
+    { name: "Giveaways", path: "/giveaways", icon: <GiftIcon className="h-4 w-4 mr-2 text-primary"/>},
     ...(user?.email === ADMIN_EMAIL
       ? [{ name: "Admin", path: "/admin", icon: <Shield className="h-4 w-4 mr-2 text-primary" /> }]
       : []),
@@ -86,9 +90,9 @@ const Navbar = () => {
 
   return (
     <nav
-      className="fixed top-2 left-1/2 -translate-x-1/2
+      className="fixed top-5 left-1/2 -translate-x-1/2
         w-[90%] sm:w-[85%] md:w-[75%] lg:w-[55%] xl:w-[55%]
-        z-50 bg-background/80 backdrop-blur-lg border border-border shadow-xl 
+        z-50 bg-background/80 backdrop-blur-lg border border-primary shadow-xl 
         rounded-2xl overflow-hidden pulse-glow2"
       style={{
         transform: `translate(-50%, ${isVisible ? "0" : "-150%"})`,
@@ -97,13 +101,24 @@ const Navbar = () => {
           "transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.7s ease-in-out",
       }}
     >
-      {/* Glow sloj */}
-      <div className="navbar-glow"></div>
 
-      {/* Light sweep sloj */}
-      <div className="light-sweep"></div>
+        {/* Glow sloj */}
+        <div className="navbar-glow"></div>
+            
+        {/* Light sweep sloj */}
+        <div className="light-sweep"></div>
+            
+        {/* Noise tekstura pozadine */}
+        <div
+          className="absolute inset-0 opacity-[0.3] mix-blend-overlay pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 350 350' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+            backgroundRepeat: "repeat",
+          }}
+        />
+        
+        <div className="container mx-auto px-6 py-4 relative z-10">
 
-      <div className="container mx-auto px-6 py-4 relative z-10">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link
@@ -122,7 +137,7 @@ const Navbar = () => {
                 alt="Serious Logo"
                 className="w-9 h-9 object-contain rounded-lg"
               />
-            </div>
+            </div> 
             <span className="text-2xl font-bold text-primary group-hover:scale-105 transition-all duration-300">
               Serious
             </span>
@@ -157,14 +172,13 @@ const Navbar = () => {
             {user && session ? (
               <Popover open={isAccountOpen} onOpenChange={setIsAccountOpen}>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
+                  <Button2 variant="glass-accent"
                     size="sm"
-                    className="border-primary/50 text-primary hover:bg-primary/20 transition-all duration-300"
+                    className="border-primary/20 border-2 text-primary hover:bg-primary/10 transition-all duration-300"
                   >
                     <User className="mr-2 h-4 w-4" />
                     My Account
-                  </Button>
+                  </Button2>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0 bg-transparent border-none shadow-none">
                   <MyAccount user={user} session={session} onLogout={handleLogout} />
@@ -172,14 +186,14 @@ const Navbar = () => {
               </Popover>
             ) : (
               <Link to="/auth">
-                <Button
-                  variant="outline"
+                <Button2
+                  variant="glass-accent"
                   size="sm"
                   className="border-primary/50 text-primary hover:bg-primary/20 transition-all duration-300"
                 >
                   <User className="mr-0 h-4 w-4" />
                   Sign In
-                </Button>
+                </Button2>
               </Link>
             )}
           </div>

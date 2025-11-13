@@ -1,113 +1,91 @@
 import { useEffect, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-import { Card, CardContent, CardHeader } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Users,
-  Eye,
   Package,
   TrendingUp,
   ShoppingBag,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Loader,
   ShieldCheck,
+  Search,
+  LogOut,
+  Eye,
 } from "lucide-react";
-import { toast } from "../hooks/use-toast";
-import { useNavigate } from "react-router-dom";
-import { Trash2 } from "lucide-react";
-
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL!,
-  import.meta.env.VITE_SUPABASE_ANON_KEY!
-);
+import { toast } from "@/hooks/use-toast";
+import { StatCard } from "@/components/admin/StatCard";
+import { RevenueChart } from "@/components/admin/RevenueChart";
+import { OrderCard } from "@/components/admin/OrderCard";
+import { ExportButton } from "@/components/admin/ExportButton";
+import { ScrollProgress } from "@/components/ScrollProgress";
+import { UserDetailModal } from "@/components/admin/UserDetailModal";
 
 const ADMIN_EMAILS = ["sven.doring12310@gmail.com", "dominikdosen98@gmail.com"];
 
-const STATUSES = ["pending", "processing", "delivered", "cancelled"];
-
-const statusConfig = {
-  delivered: {
-    class: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 shadow-emerald-500/20",
-    icon: CheckCircle,
-    gradient: "from-emerald-500/20 to-transparent",
-  },
-  processing: {
-    class: "bg-amber-500/10 text-amber-400 border-amber-500/30 shadow-amber-500/20",
-    icon: Loader,
-    gradient: "from-amber-500/20 to-transparent",
-  },
-  cancelled: {
-    class: "bg-rose-500/10 text-rose-400 border-rose-500/30 shadow-rose-500/20",
-    icon: XCircle,
-    gradient: "from-rose-500/20 to-transparent",
-  },
-  pending: {
-    class: "bg-blue-500/10 text-blue-400 border-blue-500/30 shadow-blue-500/20",
-    icon: Clock,
-    gradient: "from-blue-500/20 to-transparent",
-  },
-};
-
-const statusBadgeClass = (status: string) =>
-  statusConfig[status as keyof typeof statusConfig]?.class || statusConfig.pending.class;
-
-const StatusIcon = ({ status }: { status: string }) => {
-  const Icon = statusConfig[status as keyof typeof statusConfig]?.icon || Clock;
-  return <Icon className="h-4 w-4" />;
-};
-
-export default function AdminPage() {
-  const [loading, setLoading] = useState(true);
+export default function Admin() {
+  const navigate = useNavigate();
   const [authorized, setAuthorized] = useState(false);
-  const [usersCount, setUsersCount] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [users, setUsers] = useState<any[]>([]);
+  const [usersCount, setUsersCount] = useState(0);
   const [updatingMap, setUpdatingMap] = useState<Record<string, boolean>>({});
-  const navigate = useNavigate();
+  const [orderSearch, setOrderSearch] = useState("");
+  const [userSearch, setUserSearch] = useState("");
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [userModalOpen, setUserModalOpen] = useState(false);
 
-  // ✅ Provjera pristupa admin stranici
   useEffect(() => {
     const checkAdmin = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user || !ADMIN_EMAILS.includes(user.email)) {
-        // ❌ nije admin — nema pristup
-        navigate("/404", { replace: true });
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        navigate("/");
         return;
       }
-
+      if (!ADMIN_EMAILS.includes(data.user.email!)) {
+        toast({
+          title: "Access Denied",
+          description: "You don't have admin permissions",
+          variant: "destructive",
+        });
+        navigate("/");
+        return;
+      }
       setAuthorized(true);
     };
-
     checkAdmin();
   }, [navigate]);
 
-  // ✅ Učitavanje podataka samo ako je admin
   useEffect(() => {
     if (!authorized) return;
 
     const loadData = async () => {
       try {
-        const { count: userCount, error: usersError } = await supabase
-          .from("profiles")
-          .select("*", { count: "exact", head: true });
-        if (usersError) throw usersError;
+        const { data: authData } = await supabase.auth.getUser();
+        const currentUser = authData?.user;
 
-        const { data: ordersData, error: ordersError } = await supabase
+        const { data: usersData, count: userCount } = await supabase
+          .from("profiles")
+          .select("*", { count: "exact" });
+
+        let finalUsers = usersData || [];
+
+        const { data: productsData } = await supabase.from("products").select("*");
+
+        const { data: ordersData } = await supabase
           .from("orders")
-          .select(`
+          .select(
+            `
             id,
-            user_id,
             order_number,
             total_amount,
             total,
             status,
             created_at,
-            updated_at,
             first_name,
             last_name,
             email,
@@ -115,405 +93,471 @@ export default function AdminPage() {
             address,
             city,
             zip_code,
-            order_items (
-              id,
-              quantity,
-              price,
-              products ( id, name )
-            )
-          `)
+            order_items ( quantity, price, products ( name ) )
+          `
+          )
           .order("created_at", { ascending: false });
-        if (ordersError) throw ordersError;
 
-        const { data: productsData, error: productsError } = await supabase
-          .from("products")
-          .select("*");
-        if (productsError) throw productsError;
-
-        setUsersCount(userCount || 0);
-        setOrders(ordersData || []);
+        setUsers(finalUsers);
+        setUsersCount(userCount || finalUsers.length);
         setProducts(productsData || []);
-      } catch (err: any) {
-        console.error("Admin error:", err);
-        setError(err.message || "Unknown error");
+        setOrders(ordersData || []);
+      } catch (e) {
+        console.error("Error loading data:", e);
+        toast({
+          title: "Error",
+          description: "Failed to load data.",
+          variant: "destructive",
+        });
       } finally {
         setLoading(false);
       }
     };
 
     loadData();
+
+    // Real-time subscription for orders
+    const ordersChannel = supabase
+      .channel("orders-changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "orders" },
+        async (payload) => {
+          if (payload.eventType === "INSERT") {
+            toast({
+              title: "New Order! 🎉",
+              description: `Order #${payload.new.order_number || payload.new.id}`,
+            });
+          }
+          // Reload orders
+          const { data: ordersData } = await supabase
+            .from("orders")
+            .select(
+              `
+              id,
+              order_number,
+              total_amount,
+              total,
+              status,
+              created_at,
+              first_name,
+              last_name,
+              email,
+              phone,
+              address,
+              city,
+              zip_code,
+              order_items ( quantity, price, products ( name ) )
+            `
+            )
+            .order("created_at", { ascending: false });
+          setOrders(ordersData || []);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(ordersChannel);
+    };
   }, [authorized]);
 
-  const updateOrderStatus = async (orderId: string, newStatus: string) => {
-    setUpdatingMap((s) => ({ ...s, [orderId]: true }));
-    const prevOrders = orders;
-    setOrders((curr) => curr.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)));
+  const updateOrderStatus = async (id: string, status: string) => {
+    setUpdatingMap((p) => ({ ...p, [id]: true }));
+    const prev = orders;
+    setOrders((curr) => curr.map((o) => (o.id === id ? { ...o, status } : o)));
 
-    try {
-      const { error: updateError } = await supabase
-        .from("orders")
-        .update({ status: newStatus, updated_at: new Date().toISOString() })
-        .eq("id", orderId);
-
-      if (updateError) {
-        setOrders(prevOrders);
-        toast({
-          title: "Error",
-          description: `Failed to update status: ${updateError.message}`,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Success",
-          description: `Order status updated to "${newStatus}".`,
-        });
-      }
-    } catch (err: any) {
-      setOrders(prevOrders);
-      toast({
-        title: "Error",
-        description: "An error occurred while updating status.",
-        variant: "destructive",
-      });
-    } finally {
-      setUpdatingMap((s) => ({ ...s, [orderId]: false }));
-    }
-  };
-
-  const deleteOrder = async (orderId: string) => {
-  const confirmDelete = confirm(
-    "Are you sure you want to delete this order? This action cannot be undone."
-  );
-  if (!confirmDelete) return;
-
-  try {
-    setUpdatingMap((s) => ({ ...s, [orderId]: true }));
-
-    const { error } = await supabase
-      .from("orders")
-      .delete()
-      .eq("id", orderId);
+    const { error } = await supabase.from("orders").update({ status }).eq("id", id);
 
     if (error) {
+      setOrders(prev);
       toast({
         title: "Error",
-        description: `Failed to delete order: ${error.message}`,
+        description: "Failed to update order status.",
         variant: "destructive",
       });
     } else {
-      // Ukloni narudžbu iz lokalnog state-a
-      setOrders((curr) => curr.filter((o) => o.id !== orderId));
-      toast({
-        title: "Deleted",
-        description: "Order has been deleted successfully.",
-      });
+      toast({ title: "Status updated successfully" });
     }
-  } catch (err: any) {
-    toast({
-      title: "Error",
-      description: "An error occurred while deleting the order.",
-      variant: "destructive",
-    });
-  } finally {
-    setUpdatingMap((s) => ({ ...s, [orderId]: false }));
-  }
-};
+    setUpdatingMap((p) => ({ ...p, [id]: false }));
+  };
 
+  const deleteOrder = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this order?")) return;
+    const { error } = await supabase.from("orders").delete().eq("id", id);
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete order.",
+        variant: "destructive",
+      });
+    } else {
+      setOrders((o) => o.filter((ord) => ord.id !== id));
+      toast({ title: "Order deleted successfully" });
+    }
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
+
+  if (!authorized)
+    return (
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <div className="flex flex-col items-center gap-4 text-slate-200">
+          <ShieldCheck className="h-12 w-12 text-admin-primary animate-pulse-glow" />
+          <span className="text-xl font-semibold animate-fade-in">Checking permissions...</span>
+        </div>
+      </div>
+    );
+
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <div className="relative">
+          <div className="h-32 w-32 rounded-full border-4 border-slate-800 border-t-admin-primary animate-spin"></div>
+          <div className="absolute inset-0 rounded-full bg-admin-primary/30 blur-2xl animate-glow"></div>
+        </div>
+      </div>
+    );
 
   const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount ?? o.total ?? 0), 0);
 
-  if (!authorized) {
+  const filteredOrders = orders.filter((order) => {
+    const searchLower = orderSearch.toLowerCase();
     return (
-      <div className="flex items-center justify-center h-screen bg-slate-950 text-white">
-        <ShieldCheck className="h-6 w-6 text-blue-400 mr-2" />
-        <p>Checking admin permissions...</p>
-      </div>
+      order.order_number?.toLowerCase().includes(searchLower) ||
+      order.first_name?.toLowerCase().includes(searchLower) ||
+      order.last_name?.toLowerCase().includes(searchLower) ||
+      order.email?.toLowerCase().includes(searchLower) ||
+      order.status?.toLowerCase().includes(searchLower)
     );
-  }
+  });
 
-  if (loading) {
+  const filteredUsers = users.filter((user) => {
+    const searchLower = userSearch.toLowerCase();
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-950">
-        <div className="relative">
-          <div className="h-24 w-24 rounded-full border-4 border-slate-800 border-t-blue-500 animate-spin"></div>
-        </div>
-      </div>
+      user.email?.toLowerCase().includes(searchLower) ||
+      user.first_name?.toLowerCase().includes(searchLower) ||
+      user.last_name?.toLowerCase().includes(searchLower) ||
+      user.id?.toLowerCase().includes(searchLower)
     );
-  }
+  });
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-950 text-red-400">
-        <XCircle className="h-6 w-6 mr-2" />
-        <p>{error}</p>
-      </div>
-    );
-  }
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative overflow-hidden">
+      <ScrollProgress />
+      {/* Animated background effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.15),transparent_50%),radial-gradient(circle_at_70%_60%,rgba(96,165,250,0.15),transparent_50%)] animate-glow"></div>
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40"></div>
 
+      {/* Floating orbs */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-admin-primary/10 rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-admin-secondary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }}></div>
 
-return (
-  <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative overflow-hidden">
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%),radial-gradient(circle_at_70%_60%,rgba(147,51,234,0.1),transparent_50%)]"></div>
-    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40"></div>
-
-    <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* HEADER */}
-      <div className="text-center mt-24 mb-16 animate-fade-in">
-        <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-2xl mb-6 border border-blue-500/20 shadow-lg shadow-blue-500/10">
-          <ShoppingBag className="h-12 w-12 text-blue-400" />
-        </div>
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-blue-300 to-purple-400 text-transparent bg-clip-text">
-          Admin Dashboard
-        </h1>
-        <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-          Monitor your store performance and manage orders in real-time
-        </p>
-      </div>
-
-      {/* STATS CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-        {/* USERS */}
-        <Card className="group bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <CardContent className="p-6 relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors duration-300">
-                <Users className="h-7 w-7 text-blue-400" />
-              </div>
-              <TrendingUp className="h-5 w-5 text-emerald-400" />
-            </div>
-            <h3 className="text-4xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">{usersCount}</h3>
-            <p className="text-slate-400 text-sm font-medium">Total Users</p>
-          </CardContent>
-        </Card>
-
-        {/* ORDERS */}
-        <Card className="group bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <CardContent className="p-6 relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-purple-500/10 rounded-xl border border-purple-500/20 group-hover:bg-purple-500/20 transition-colors duration-300">
-                <Eye className="h-7 w-7 text-purple-400" />
-              </div>
-              <TrendingUp className="h-5 w-5 text-emerald-400" />
-            </div>
-            <h3 className="text-4xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">{orders.length}</h3>
-            <p className="text-slate-400 text-sm font-medium">Total Orders</p>
-          </CardContent>
-        </Card>
-
-        {/* PRODUCTS */}
-        <Card className="group bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-xl border border-slate-700/50 hover:border-emerald-500/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/20 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <CardContent className="p-6 relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 group-hover:bg-emerald-500/20 transition-colors duration-300">
-                <Package className="h-7 w-7 text-emerald-400" />
-              </div>
-              <TrendingUp className="h-5 w-5 text-emerald-400" />
-            </div>
-            <h3 className="text-4xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">{products.length}</h3>
-            <p className="text-slate-400 text-sm font-medium">Products</p>
-          </CardContent>
-        </Card>
-
-        {/* REVENUE */}
-        <Card className="group bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-xl border border-slate-700/50 hover:border-amber-500/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-amber-500/20 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <CardContent className="p-6 relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 group-hover:bg-amber-500/20 transition-colors duration-300">
-                <TrendingUp className="h-7 w-7 text-amber-400" />
-              </div>
-              <TrendingUp className="h-5 w-5 text-emerald-400" />
-            </div>
-            <h3 className="text-4xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">
-              €{totalRevenue.toFixed(2)}
-            </h3>
-            <p className="text-slate-400 text-sm font-medium">Total Revenue</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* --- RECENT ORDERS --- */}
-      <div className="mb-16">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="h-1 w-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white">Recent Orders</h2>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {orders.map((order, idx) => (
-            <Card
-              key={order.id}
-              className="group bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-xl border border-slate-700/50 hover:border-slate-600/50 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl relative overflow-hidden"
-              style={{ animationDelay: `${idx * 50}ms` }}
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Hero Section */}
+        <div className="text-center mt-16 mb-20 animate-fade-in-scale">
+          <div className="flex justify-end mb-4">
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="bg-slate-800/60 border-slate-700/50 text-white hover:bg-slate-800/80 hover:border-admin-danger/50 hover:text-admin-danger transition-all"
             >
-              <div
-                className={`absolute inset-0 bg-gradient-to-r ${
-                  statusConfig[order.status as keyof typeof statusConfig]?.gradient ||
-                  statusConfig.pending.gradient
-                } opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`}
-              ></div>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
+          <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-admin-primary/20 to-admin-secondary/20 rounded-3xl mb-8 border border-admin-primary/30 shadow-2xl shadow-admin-primary/20 hover:scale-110 transition-transform duration-500">
+            <ShoppingBag className="h-16 w-16 text-admin-primary animate-float" />
+          </div>
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black bg-gradient-to-r from-admin-primary via-admin-primary-glow to-white bg-clip-text text-transparent">
+              Admin Dashboard
+            </h1>
+          </div>
+          <p className="text-slate-400 text-xl max-w-3xl mx-auto font-medium leading-relaxed">
+            Monitor your store performance and manage orders with real-time insights
+          </p>
+        </div>
 
-              <CardHeader className="relative z-10 flex flex-row items-start justify-between gap-4 pb-4">
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <Badge className="bg-blue-500/10 text-blue-300 border-blue-500/30 shadow-sm">
-                      #{order.order_number ?? order.id}
-                    </Badge>
-                    <Badge
-                      className={`${statusBadgeClass(order.status)} flex items-center gap-1.5 shadow-sm`}
-                    >
-                      <StatusIcon status={order.status} />
-                      {order.status}
-                    </Badge>
-                  </div>
-                </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 animate-fade-in" style={{ animationDelay: "100ms" }}>
+          <StatCard
+            title="Total Users"
+            value={usersCount}
+            icon={Users}
+            trend="up"
+            trendValue="+12%"
+            variant="primary"
+          />
+          <StatCard
+            title="Total Orders"
+            value={orders.length}
+            icon={ShoppingBag}
+            trend="up"
+            trendValue="+8%"
+            variant="secondary"
+          />
+          <StatCard
+            title="Products"
+            value={products.length}
+            icon={Package}
+            trend="up"
+            trendValue="+3%"
+            variant="success"
+          />
+          <StatCard
+            title="Total Revenue"
+            value={`€${totalRevenue.toFixed(2)}`}
+            icon={TrendingUp}
+            trend="up"
+            trendValue="+23%"
+            variant="warning"
+          />
+        </div>
 
-              <div>
-                <button
-                  onClick={() => deleteOrder(order.id)}
-                  disabled={!!updatingMap[order.id]}
-                  className="mt-1 text-rose-400 hover:text-rose-500 transition-colors"
-                  title="Delete Order"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+        {/* Revenue Chart */}
+        <div className="mb-16 animate-fade-in" style={{ animationDelay: "300ms" }}>
+          <RevenueChart orders={orders} />
+        </div>
+
+        {/* Tabs Section */}
+        <Tabs defaultValue="orders" className="w-full mb-16 animate-fade-in" style={{ animationDelay: "400ms" }}>
+          <TabsList className="mb-12 grid w-full max-w-lg mx-auto grid-cols-3 gap-3 bg-slate-900/60 border border-slate-700/50 p-2 backdrop-blur-xl rounded-2xl">
+            <TabsTrigger 
+              value="orders"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-admin-primary/30 data-[state=active]:to-admin-primary/20 data-[state=active]:text-white data-[state=active]:border-admin-primary/50 transition-all duration-300 rounded-xl font-semibold"
+            >
+              Orders
+            </TabsTrigger>
+            <TabsTrigger 
+              value="users"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-admin-secondary/30 data-[state=active]:to-admin-secondary/20 data-[state=active]:text-white data-[state=active]:border-admin-secondary/50 transition-all duration-300 rounded-xl font-semibold"
+            >
+              Users
+            </TabsTrigger>
+            <TabsTrigger 
+              value="products"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-admin-success/30 data-[state=active]:to-admin-success/20 data-[state=active]:text-white data-[state=active]:border-admin-success/50 transition-all duration-300 rounded-xl font-semibold"
+            >
+              Products
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Orders Tab */}
+          <TabsContent value="orders">
+            <div className="flex items-center justify-between mb-8 flex-wrap gap-6">
+              <div className="flex items-center gap-4">
+                <div className="h-2 w-16 bg-gradient-to-r from-admin-primary via-admin-primary-glow to-admin-secondary rounded-full shadow-lg shadow-admin-primary/30"></div>
+                <h2 className="text-4xl sm:text-5xl font-black text-transparent bg-gradient-to-r from-white to-slate-300 bg-clip-text">Orders</h2>
+                <Badge className="bg-admin-primary/20 text-admin-primary-glow border-admin-primary/40 text-lg px-4 py-1 font-bold shadow-lg shadow-admin-primary/20 animate-pulse">
+                  {filteredOrders.length}
+                </Badge>
               </div>
-              
-                <div className="flex flex-col items-end gap-2">
-                  <select
-                    id={`status-${order.id}`}
-                    value={order.status || "pending"}
-                    onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                    disabled={!!updatingMap[order.id]}
-                    className="bg-slate-800/80 backdrop-blur-sm border border-slate-600/50 rounded-lg px-3 py-1.5 text-sm text-slate-200 hover:border-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all disabled:opacity-50 cursor-pointer"
-                  >
-                    {STATUSES.map((s) => (
-                      <option key={s} value={s} className="bg-slate-800">
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </CardHeader>
+              <ExportButton data={filteredOrders} filename="orders" type="orders" />
+            </div>
 
+            {/* Search */}
+            <div className="mb-8 max-w-2xl">
+              <div className="relative group">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 group-hover:text-admin-primary transition-colors" />
+                <input
+                  type="text"
+                  placeholder="Search orders by number, customer, email, or status..."
+                  value={orderSearch}
+                  onChange={(e) => setOrderSearch(e.target.value)}
+                  className="w-full pl-12 pr-6 py-4 bg-slate-800/60 border border-slate-700/50 rounded-2xl text-slate-200 placeholder-slate-500 focus:border-admin-primary focus:outline-none focus:ring-2 focus:ring-admin-primary/30 transition-all backdrop-blur-xl font-medium hover:bg-slate-800/80"
+                />
+              </div>
+            </div>
 
-
-              <CardContent className="relative z-10 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-slate-800/30 rounded-xl border border-slate-700/30">
-                  <div>
-                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Customer</p>
-                    <p className="text-white font-semibold">
-                      {order.first_name} {order.last_name}
-                    </p>
-                    <p className="text-sm text-slate-400 mt-1">{order.email}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Contact</p>
-                    <p className="text-white font-semibold">{order.phone || "N/A"}</p>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-slate-800/30 rounded-xl border border-slate-700/30">
-                  <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">
-                    Shipping Address
-                  </p>
-                  <p className="text-white font-medium">{order.address}</p>
-                  <p className="text-slate-400 text-sm">
-                    {order.city}, {order.zip_code}
-                  </p>
-                </div>
-
-                <div className="p-4 bg-slate-800/30 rounded-xl border border-slate-700/30">
-                  <div className="flex justify-between items-center mb-3">
-                    <p className="text-xs text-slate-500 uppercase tracking-wider">Order Items</p>
-                    <p className="text-lg font-bold text-blue-400">
-                      €{(order.total_amount ?? order.total ?? 0).toFixed(2)}
+            {filteredOrders.length === 0 ? (
+              <Card className="bg-gradient-to-br from-slate-900/60 to-slate-800/60 border-slate-700/50 backdrop-blur-xl">
+                <CardContent className="py-16">
+                  <div className="text-center space-y-4">
+                    <Package className="h-16 w-16 text-slate-600 mx-auto" />
+                    <p className="text-slate-400 text-lg font-medium">
+                      {orderSearch ? "No orders match your search." : "No orders found."}
                     </p>
                   </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {filteredOrders.map((order, idx) => (
+                  <OrderCard
+                    key={order.id}
+                    order={order}
+                    onStatusUpdate={updateOrderStatus}
+                    onDelete={deleteOrder}
+                    isUpdating={!!updatingMap[order.id]}
+                    animationDelay={idx * 50}
+                  />
+                ))}
+              </div>
+            )}
+          </TabsContent>
 
-                  {order.order_items?.length > 0 ? (
-                    <ul className="space-y-2">
-                      {order.order_items.map((item: any) => (
-                        <li
-                          key={item.id}
-                          className="flex justify-between items-center text-sm p-2 bg-slate-900/50 rounded-lg"
+          {/* Users Tab */}
+          <TabsContent value="users">
+            <div className="flex items-center justify-between mb-8 flex-wrap gap-6">
+              <div className="flex items-center gap-4">
+                <div className="h-2 w-16 bg-gradient-to-r from-admin-secondary via-admin-secondary to-admin-primary rounded-full shadow-lg shadow-admin-secondary/30"></div>
+                <h2 className="text-4xl sm:text-5xl font-black text-transparent bg-gradient-to-r from-white to-slate-300 bg-clip-text">Users</h2>
+                <Badge className="bg-admin-secondary/20 text-admin-secondary border-admin-secondary/40 text-lg px-4 py-1 font-bold shadow-lg shadow-admin-secondary/20 animate-pulse">
+                  {filteredUsers.length}
+                </Badge>
+              </div>
+              <ExportButton data={filteredUsers} filename="users" type="users" />
+            </div>
+
+            {/* Search */}
+            <div className="mb-8 max-w-2xl">
+              <div className="relative group">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400 group-hover:text-admin-secondary transition-colors" />
+                <input
+                  type="text"
+                  placeholder="Search users by email, name, or ID..."
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  className="w-full pl-12 pr-6 py-4 bg-slate-800/60 border border-slate-700/50 rounded-2xl text-slate-200 placeholder-slate-500 focus:border-admin-secondary focus:outline-none focus:ring-2 focus:ring-admin-secondary/30 transition-all backdrop-blur-xl font-medium hover:bg-slate-800/80"
+                />
+              </div>
+            </div>
+
+            {filteredUsers.length === 0 ? (
+              <Card className="bg-gradient-to-br from-slate-900/60 to-slate-800/60 border-slate-700/50 backdrop-blur-xl">
+                <CardContent className="py-16">
+                  <div className="text-center space-y-4">
+                    <Users className="h-16 w-16 text-slate-600 mx-auto" />
+                    <p className="text-slate-400 text-lg font-medium">
+                      {userSearch ? "No users match your search." : "No users found."}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="bg-gradient-to-br from-slate-900/60 to-slate-800/60 border-slate-700/50 backdrop-blur-xl overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-slate-300">
+                    <thead className="bg-slate-800/80 text-slate-400 text-sm backdrop-blur-xl">
+                      <tr>
+                        <th className="p-5 font-bold uppercase tracking-wider">ID</th>
+                        <th className="p-5 font-bold uppercase tracking-wider">Email</th>
+                        <th className="p-5 font-bold uppercase tracking-wider">Name</th>
+                        <th className="p-5 font-bold uppercase tracking-wider">Created</th>
+                        <th className="p-5 font-bold uppercase tracking-wider">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredUsers.map((u, idx) => (
+                        <tr
+                          key={u.id}
+                          className="border-t border-slate-800/50 hover:bg-slate-800/40 transition-all duration-300 animate-fade-in"
+                          style={{ animationDelay: `${idx * 30}ms` }}
                         >
-                          <span className="text-slate-300">
-                            {item.products?.name ?? item.product_id ?? "Unknown product"}
-                          </span>
-                          <span className="text-slate-400 font-medium">
-                            {item.quantity} × €{item.price}
-                          </span>
-                        </li>
+                          <td className="p-5 font-mono text-xs text-slate-500 font-semibold">
+                            {u.id.slice(0, 8)}...
+                          </td>
+                          <td className="p-5 font-medium">{u.email}</td>
+                          <td className="p-5 font-medium">
+                            {u.first_name || u.last_name
+                              ? `${u.first_name || ""} ${u.last_name || ""}`.trim()
+                              : "N/A"}
+                          </td>
+                          <td className="p-5 text-slate-400 font-medium">
+                            {new Date(u.created_at).toLocaleDateString()}
+                          </td>
+                          <td className="p-5">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setSelectedUser(u);
+                                setUserModalOpen(true);
+                              }}
+                              className="bg-admin-primary/10 border-admin-primary/30 text-admin-primary hover:bg-admin-primary/20 hover:border-admin-primary/50 transition-all"
+                            >
+                              <Eye className="h-4 w-4 mr-1" />
+                              View
+                            </Button>
+                          </td>
+                        </tr>
                       ))}
-                    </ul>
-                  ) : (
-                    <p className="text-slate-500 text-sm">No items</p>
-                  )}
-
-                  <div className="mt-4 pt-3 border-t border-slate-700/50 flex items-center gap-2 text-xs text-slate-500">
-                    <Clock className="h-3.5 w-3.5" />
-                    {new Date(order.created_at).toLocaleString()}
-                  </div>
+                    </tbody>
+                  </table>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* Products Tab */}
+          <TabsContent value="products">
+            <div className="flex items-center justify-between mb-8 flex-wrap gap-6">
+              <div className="flex items-center gap-4">
+                <div className="h-2 w-16 bg-gradient-to-r from-admin-success via-admin-success to-admin-primary rounded-full shadow-lg shadow-admin-success/30"></div>
+                <h2 className="text-4xl sm:text-5xl font-black text-transparent bg-gradient-to-r from-white to-slate-300 bg-clip-text">Product Catalog</h2>
+                <Badge className="bg-admin-success/20 text-admin-success border-admin-success/40 text-lg px-4 py-1 font-bold shadow-lg shadow-admin-success/20 animate-pulse">
+                  {products.length}
+                </Badge>
+              </div>
+              <ExportButton data={products} filename="products" type="products" />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {products.map((p, idx) => (
+                <Card
+                  key={p.id}
+                  className="group relative bg-gradient-to-br from-slate-900/95 to-slate-800/90 backdrop-blur-xl border border-slate-700/50 hover:border-admin-success/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-admin-success/20 overflow-hidden animate-fade-in-scale"
+                  style={{ animationDelay: `${idx * 30}ms` }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-admin-success/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  <CardContent className="relative z-10 p-6 space-y-5">
+                    <div className="p-4 bg-gradient-to-br from-admin-success/20 to-admin-success/10 rounded-2xl border border-admin-success/30 inline-flex group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
+                      <Package className="h-8 w-8 text-admin-success" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white group-hover:text-admin-success transition-colors line-clamp-2 min-h-[3.5rem] leading-tight">
+                      {p.name}
+                    </h3>
+
+                    <div className="flex justify-between items-end pt-4 border-t border-slate-700/50">
+                      <div>
+                        <p className="text-xs text-slate-500 uppercase tracking-widest mb-2 font-bold">
+                          Price
+                        </p>
+                        <p className="text-3xl font-black text-admin-success">€{p.price}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-slate-500 uppercase tracking-widest mb-2 font-bold">
+                          Stock
+                        </p>
+                        <p
+                          className={`text-2xl font-black ${
+                            p.stock > 10
+                              ? "text-admin-success"
+                              : p.stock > 0
+                              ? "text-admin-warning"
+                              : "text-admin-danger"
+                          }`}
+                        >
+                          {p.stock}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
 
-      {/* PRODUCT CATALOG */}
-      <div className="pb-12">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="h-1 w-12 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full"></div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white">Product Catalog</h2>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.map((p, idx) => (
-            <Card
-              key={p.id}
-              className="group bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-xl border border-slate-700/50 hover:border-emerald-500/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/10 relative overflow-hidden"
-              style={{ animationDelay: `${idx * 30}ms` }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <CardContent className="relative z-10 p-6 space-y-4">
-                <div className="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 inline-flex">
-                  <Package className="h-6 w-6 text-emerald-400" />
-                </div>
-                <h3 className="text-xl font-bold text-white group-hover:text-emerald-300 transition-colors line-clamp-2 min-h-[3.5rem]">
-                  {p.name || p.title}
-                </h3>
-
-                <div className="flex justify-between items-end pt-2 border-t border-slate-700/50">
-                  <div>
-                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Price</p>
-                    <p className="text-2xl font-bold text-emerald-400">{p.price} €</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Stock</p>
-                    <p
-                      className={`text-xl font-semibold ${
-                        (p.stock ?? 0) > 10
-                          ? "text-emerald-400"
-                          : (p.stock ?? 0) > 0
-                          ? "text-amber-400"
-                          : "text-rose-400"
-                      }`}
-                    >
-                      {p.stock ?? "N/A"}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
+      <UserDetailModal
+        user={selectedUser}
+        open={userModalOpen}
+        onOpenChange={setUserModalOpen}
+      />
     </div>
-  </div>
-);
+  );
 }

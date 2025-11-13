@@ -144,4 +144,4 @@ VALUES
   ('Gaming Mouse Pad XXL', 'Extended mouse pad with Serious branding', 34.99, 'Gaming Gear', 'https://images.unsplash.com/photo-1598057076865-c67fefd248d3?w=500', 100, false),
   ('Serious Cap', 'Stylish cap with embroidered logo', 24.99, 'Merch', 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500', 75, false),
   ('RGB Gaming Keyboard', 'Mechanical keyboard with custom Serious keycaps', 149.99, 'Gaming Gear', 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500', 20, false),
-  ('Serious Sticker Pack', 'Set of 10 premium vinyl stickers', 9.99, 'Accessories', 'https://images.unsplash.com/photo-1558522195-e1201b090344?w=500', 200, false);
+  ('Invalidska kolica', 'Original kolica marke - Miha Bauštel', 199.99, 'Accessories', 'https://www.medicaldirect.hr/media/catalog/product/cache/6bac99ab0a9b4385b54e0a029ce6ac63/2/0/20210531_093311.jpg', 1, true);

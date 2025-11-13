@@ -1,9 +1,13 @@
 import { Button } from "@/components/ui/button";
+import { Button2 } from "@/components/ui/button2";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card2, Card2Content, Card2Description, Card2Header, Card2Title } from "@/components/ui/card2";
 import { ExternalLink, MessageCircle, Users, Video, Zap } from "lucide-react";
 import { FaDiscord, FaDownload, FaInstagram, FaKickstarter, FaTiktok, FaYoutube, FaYoutubeSquare } from "react-icons/fa";
 import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
+import { ScrollProgress } from '@/components/ScrollProgress';
+import AnimatedBackground from "@/components/AnimatedBackground";
 
 // Configurable social media links
 
@@ -94,40 +98,45 @@ const socialPlatforms = [
 
 const SocialLinks = () => {
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden pt-20">
-      <div className="container mx-auto px-6 py-16"></div>
+    <div className="min-h-screen relative overflow-hidden pt-6">
+      <ScrollProgress />
 
-      {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-background to-blue-700/20 animate-gradient-shift"></div>
-      <div className="absolute inset-0 bg-gradient-radial from-transparent to-background/90"></div>
-      
+      {/* Animated background */}
+      <div className="absolute inset-0 -z-50 pointer-events-none">
+        <AnimatedBackground />
+      </div>
+
       <div className="container mx-auto pb-20 px-6 relative z-10">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent">
+        <div className="text-center mb-16 mt-32">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-primary bg-clip-text text-primary">
             Connect with us
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Stay connected with the Serious community across all platforms. Follow us for the latest updates, 
-            exclusive content, and instant notifications about new giveaways.
+            Stay connected with the Serious community across all platforms.
+            Follow us for the latest updates, exclusive content, and instant
+            notifications about new giveaways.
           </p>
         </div>
 
-        {/* Social Platform Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto ">
+        {/* Social Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {socialPlatforms.map((platform, index) => {
             const IconComponent = platform.icon;
             return (
-              <Card 
+              <Card2
                 key={platform.name}
-                className={`bg-surface-dark border-border hover:border-primary/70 transition-all duration-700 group hover:shadow-2xl hover:shadow-primary/40 hover-lift animate-fade-in glow-on-hover transform-gpu ${
-                  !platform.isActive ? 'opacity-60' : ''
+                variant="glass-primary"
+                className={`border-primary hover:border-primary/70 transition-all duration-700 group hover:shadow-2xl hover:shadow-primary/40 hover-lift animate-fade-in glow-on-hover transform-gpu ${
+                  !platform.isActive ? "opacity-60" : ""
                 }`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <CardHeader>
+                <Card2Header>
                   <div className="flex items-center space-x-4">
-                    <div className={`w-12 h-12 ${platform.color} rounded-full flex items-center justify-center transition-all duration-3000 animate-pulse`}>
+                    <div
+                      className={`w-12 h-12 ${platform.color} rounded-full flex items-center justify-center transition-all duration-3000 animate-pulse`}
+                    >
                       <IconComponent className="h-6 w-6 text-white" />
                     </div>
                     <div>
@@ -140,70 +149,90 @@ const SocialLinks = () => {
                         )}
                       </CardTitle>
                       <div className="text-sm text-primary font-semibold">
-                        {platform.members || platform.followers || platform.subscribers}
-                        {platform.members ? ' ' : platform.followers ? ' ' : ' '}
+                        {platform.members ||
+                          platform.followers ||
+                          platform.subscribers}
                       </div>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-muted-foreground mb-6">
+                </Card2Header>
+                <Card2Content>
+                  <Card2Description className="text-muted-foreground mb-6">
                     {platform.description}
-                  </CardDescription>
-                  
+                  </Card2Description>
+
                   {platform.isActive ? (
-                    <Button 
-                      className="w-full bg-gradient-primary hover:opacity-90 transition-all duration-500 hover:scale-110 hover:shadow-2xl hover:shadow-primary/40 magnetic glow-on-hover transform-gpu"
-                      onClick={() => window.open(platform.url, '_blank')}
+                    <Button2
+                      variant="glass-accent"
+                      className="w-full border-accent hover:opacity-90 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-primary/40 magnetic glow-on-hover transform-gpu"
+                      onClick={() => window.open(platform.url, "_blank")}
                     >
                       <ExternalLink className="mr-2 h-4 w-4" />
                       Visit {platform.name}
-                    </Button>
+                    </Button2>
                   ) : (
-                    <Button 
-                      disabled
-                      className="w-full"
-                      variant="outline"
-                    >
+                    <Button2 disabled className="w-full" variant="outline">
                       Soon!
-                    </Button>
+                    </Button2>
                   )}
-                </CardContent>
-              </Card>
+                </Card2Content>
+              </Card2>
             );
           })}
         </div>
 
         {/* Call to Action */}
         <div className="text-center mt-16">
-          <div className="bg-surface-dark border border-border rounded-lg p-8 max-w-2xl mx-auto">
+          <div className="bg-glass border border-primary rounded-lg p-8 max-w-2xl mx-auto">
             <h3 className="text-2xl font-bold mb-4 text-foreground">
               Be the first to know
             </h3>
             <p className="text-muted-foreground mb-6">
-              Join our Discord community to be the first to hear about new giveaways and exclusive events.
+              Join our Discord community to be the first to hear about new
+              giveaways and exclusive events.
             </p>
-            <Button 
-              size="lg" 
-              className="bg-[#5865F2] hover:bg-[#008dca]/90 text-white mb-2 transition-all duration-500 hover:hover-lift"
-              onClick={() => window.open("https://discord.gg/seriousserver", '_blank')}
+
+            {/* Discord Button */}
+            <Button2
+              variant="glass-accent"
+              size="lg"
+              className="bg-[#0d256d] hover:bg-[#008dca]/90 text-white mb-2 transition-all duration-500 hover:hover-lift"
+              onClick={() =>
+                window.open("https://discord.gg/seriousserver", "_blank")
+              }
             >
-              <FaDiscord className="mr-2 h-5 w-5" />
-              Pridruži se Discord-u
-            </Button>
+              <div className="flex items-center group">
+                <FaDiscord
+                  className="mr-2 h-5 w-5 transition-transform duration-700 group-hover:rotate-[360deg]"
+                  style={{ transformOrigin: "center" }}
+                />
+                <span>Pridruži se Discord-u</span>
+              </div>
+            </Button2>
+
+            {/* App Download Section */}
             <h3 className="text-2xl font-bold mb-4 text-foreground mt-10">
               Or download our app!
             </h3>
-             <p className="text-muted-foreground mb-6">
-              Be first to get notified for our new giveaways, stream notifications, and much more!
+            <p className="text-muted-foreground mb-6">
+              Be first to get notified for our new giveaways, stream
+              notifications, and much more!
             </p>
-              <Button 
-              size="lg" 
-              className="bg-[#5865F2] hover:bg-[#008dca]/90 text-white mb-2 transition-all duration-500 hover:hover-lift duration-3000 animate-pulse"
+
+            {/* Download Button */}
+            <Button2
+              variant="glass-accent"
+              size="lg"
+              className="hover:bg-[#003a78]/90 text-white mb-2 transition-all duration-3000 hover:hover-lift animate-pulse"
             >
-              <FaDownload className="mr-2 h-5 w-5" />
-              App is comming soon!
-            </Button>
+              <div className="flex items-center group">
+                <FaDownload
+                  className="mr-2 h-5 w-5 transition-transform duration-3000 group-hover:rotate-[360deg]"
+                  style={{ transformOrigin: "center" }}
+                />
+                <span>Coming Soon!</span>
+              </div>
+            </Button2>
           </div>
         </div>
       </div>

@@ -53,7 +53,7 @@ const Cart = ({ user }: CartProps) => {
         <SheetHeader>
           <SheetTitle className="text-foreground">My Cart</SheetTitle>
           <SheetDescription className="text-muted-foreground">
-            {cartItems.length === 0 ? "Your cart is empty" : `${cartItems.length} items in cart`}
+            {cartItems.length === 0 ? "Your cart is empty" : `${cartItems.length} products in cart`}
           </SheetDescription>
         </SheetHeader>
         

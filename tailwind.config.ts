@@ -62,16 +62,16 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        'electric-blue': 'hsl(var(--electric-blue))',
-        'electric-blue-glow': 'hsl(var(--electric-blue-glow))',
-        'deep-black': 'hsl(var(--deep-black))',
-        'surface-dark': 'hsl(var(--surface-dark))',
-        'surface-darker': 'hsl(var(--surface-darker))',
+        "electric-blue": "hsl(var(--electric-blue))",
+        "electric-blue-glow": "hsl(var(--electric-blue-glow))",
+        "deep-black": "hsl(var(--deep-black))",
+        "surface-dark": "hsl(var(--surface-dark))",
+        "surface-darker": "hsl(var(--surface-darker))",
       },
       backgroundImage: {
-        'gradient-primary': 'var(--gradient-primary)',
-        'gradient-surface': 'var(--gradient-surface)',
-        'gradient-glow': 'var(--gradient-glow)',
+        "gradient-primary": "var(--gradient-primary)",
+        "gradient-surface": "var(--gradient-surface)",
+        "gradient-glow": "var(--gradient-glow)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -110,11 +110,11 @@ export default {
           "0%": { opacity: "0", transform: "scale(0.8)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
-        "glow": {
+        glow: {
           "0%, 100%": { boxShadow: "0 0 20px hsl(var(--electric-blue) / 0.5)" },
           "50%": { boxShadow: "0 0 40px hsl(var(--electric-blue) / 0.8)" },
         },
-        "float": {
+        float: {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-10px)" },
         },
@@ -128,6 +128,16 @@ export default {
             animationTimingFunction: "cubic-bezier(0, 0, 0.2, 1)",
           },
         },
+        "gradient-shift": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
+        "float-xy": {
+          "0%, 100%": { transform: "translate(0px, 0px)" },
+          "50%": { transform: "translate(600px, -700px)" },
+        },
+        
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -135,13 +145,13 @@ export default {
         "fade-in": "fade-in 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
         "slide-up": "slide-up 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
         "scale-in": "scale-in 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
-        "glow": "glow 3s ease-in-out infinite",
-        "float": "float 4s ease-in-out infinite",
+        glow: "glow 3s ease-in-out infinite",
+        float: "float 4s ease-in-out infinite",
         "bounce-soft": "bounce-soft 5s infinite",
+        "gradient-shift": "gradient-shift 15s ease infinite",
+        "float-xy": "float-xy 10s ease-in-out infinite",
       },
     },
   },
-
-  
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;

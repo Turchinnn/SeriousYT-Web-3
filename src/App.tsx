@@ -18,10 +18,11 @@ import Auth from "./pages/Auth";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "@/components/ScrollToTop";
-
 import Admin from "./pages/Admin";
 
-// 👇 Napravi QueryClient jednom
+// ✅ Dodaj import tvoje komponente
+import AnimatedBackground from "@/components/AnimatedBackground";
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -31,18 +32,20 @@ function App() {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <ScrollToTop /> {/* ✅ resetira scroll pri promjeni stranice */}
+          <ScrollToTop />
           <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
-      
-              {/* Animated Dark Blue Background */}
-              <div className="fixed inset-0 bg-gradient-to-br from-blue-900/10 via-background to-blue-800/10 animate-gradient-shift -z-10"></div>
+
+            {/* 🔥 Zamijenjeno: Animated background umjesto statičkog gradienta */}
+            <div className="fixed inset-0 -z-10">
+              <AnimatedBackground />
+            </div>
 
             {/* Navbar */}
             <Navbar />
 
             {/* Glavni sadržaj */}
             <main className="flex-1 wiggle-background relative z-10 scroll-smooth">
-            {/* iOS blur overlays */}
+              {/* iOS blur overlays */}
               <div className="ios-blur-overlay top-blur-fade" />
               <div className="ios-blur-overlay bottom-blur-fade" />
 

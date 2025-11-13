@@ -134,7 +134,7 @@ const MyOrders = ({ user }: MyOrdersProps) => {
         <h3 className="text-lg font-semibold text-foreground mb-4">My orders</h3>
         <div className="space-y-4">
           {orders.map((order) => (
-            <Card key={order.id} className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative overflow-hidden border-border">
+            <Card key={order.id} className="bg-surface-dark border-border">
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>

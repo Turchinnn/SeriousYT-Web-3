@@ -15,9 +15,9 @@ export const getProductImages = (productId: string, category: string) => {
       default: mockImages.default,
       variations: {
         "Black": mockImages.black,
-        "White": mockImages.white,
+        "White": mockImages.white,  
         "Gray": mockImages.gray,
-        "Plava": mockImages.blue
+        "Blue": mockImages.blue
       }
     };
   }
@@ -29,7 +29,7 @@ export const getProductImages = (productId: string, category: string) => {
         "Black": mockImages.black,
         "White": mockImages.white,
         "Gray": mockImages.gray,
-        "Plava": mockImages.blue
+        "Blue": mockImages.blue
       }
     };
   }
@@ -51,7 +51,7 @@ export const getProductImages = (productId: string, category: string) => {
       "Black": mockImages.black,
       "White": mockImages.white,
       "Gray": mockImages.gray,
-      "Plava": mockImages.blue
+      "Blue": mockImages.blue
     }
   };
 };

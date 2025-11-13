@@ -7,6 +7,7 @@ import { ShoppingCart, Clock, Package, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
 import { User } from "@supabase/supabase-js";
+import { ScrollProgress } from '@/components/ScrollProgress';
 import { toast } from "@/hooks/use-toast";
 
 interface Product {
@@ -18,7 +19,7 @@ interface Product {
   image_url: string;
   stock_quantity: number;
   is_active: boolean;
-  is_available?: boolean; // New field for availability status
+  is_available?: boolean;
 }
 
 const Webshop = () => {
@@ -30,7 +31,6 @@ const Webshop = () => {
   const { addToCart, refetch: refetchCart } = useCart(user);
 
   useEffect(() => {
-    // Check for user session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
@@ -97,7 +97,9 @@ const Webshop = () => {
     <div className="min-h-screen bg-background relative overflow-hidden pt-20">
       <div className="container mx-auto px-6 py-16"></div>
 
-      {/* Animated Background */}
+            <ScrollProgress />
+
+      {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-background to-blue-700/20 animate-gradient-shift"></div>
       <div className="absolute inset-0 bg-gradient-radial from-transparent to-background/90"></div>
       
@@ -132,7 +134,7 @@ const Webshop = () => {
           ))}
         </div>
 
-        {/* Products or Under Construction */}
+        {/* Products */}
         {filteredProducts.length === 0 ? (
           <Card className="bg-surface-dark border-border max-w-2xl mx-auto">
             <CardHeader>
@@ -159,23 +161,23 @@ const Webshop = () => {
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <CardHeader>
-                  <div className="w-full h-48 bg-muted rounded-lg mb-4 overflow-hidden relative group/image">
+                  <div className="w-full h-64 bg-black rounded-lg mb-4 overflow-hidden relative group/image">
                     <img 
                       src={product.image_url || "/placeholder.png"} 
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover/image:scale-110 transition-all duration-700"
+                      className="w-full h-full object-contain object-center bg-black group-hover/image:scale-105 transition-all duration-700"
                     />
                     {/* Availability badges */}
                     {product.is_available === false || product.stock_quantity === 0 ? (
                       <div className="absolute top-3 left-3">
                         <Badge className="bg-destructive/90 text-destructive-foreground">
-                          Unavaible
+                          Unavailable
                         </Badge>
                       </div>
                     ) : product.stock_quantity > 0 && product.stock_quantity <= 10 && (
                       <div className="absolute top-3 left-3">
                         <Badge className="bg-warning/80 text-warning-foreground">
-                          Only {product.stock_quantity} on board
+                          Only {product.stock_quantity} left
                         </Badge>
                       </div>
                     )}
@@ -230,7 +232,7 @@ const Webshop = () => {
             onClick={() => window.open("/", '_self')}
             className="border-primary text-primary hover:bg-primary/10"
           >
-            Back to home
+            Back to homepage
           </Button>
         </div>
       </div>
